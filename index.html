@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Bau Control System</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════ STATUS BAR -->
+  <header class="status-bar">
+    <div class="sb-left">
+      <span class="machine-id">BAU-7 / SN-40281</span>
+      <span class="status-pill active">OPERATIONAL</span>
+    </div>
+    <div class="sb-center">
+      <div class="status-indicator" id="ind-gps">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="10" r="4"/><path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 13 8 13s8-7.75 8-13a8 8 0 0 0-8-8z"/></svg>
+        <span>GPS</span>
+      </div>
+      <div class="status-indicator" id="ind-can">
+        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h12M12 6v12"/></svg>
+        <span>CAN</span>
+      </div>
+      <div class="status-indicator" id="ind-telematics">
+        <svg viewBox="0 0 24 24"><path d="M1 6s4-4 11-4 11 4 11 4M5 10s2-2 7-2 7 2 7 2M9 14s1-1 3-1 3 1 3 1M12 18v.01"/></svg>
+        <span>TELEM</span>
+      </div>
+    </div>
+    <div class="sb-right">
+      <div class="clock" id="clock">--:--</div>
+      <button class="icon-btn" id="btn-alert-bar" title="Alerts">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="badge" id="alert-badge">2</span>
+      </button>
+      <button class="icon-btn" id="btn-settings" title="Settings">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════ MAIN AREA -->
+  <main class="main-grid">
+
+    <!-- ─────────────────────────── LEFT PANEL: HYDRAULIC CONTROLS -->
+    <aside class="panel panel-left">
+      <div class="panel-title">Hydraulic Controls</div>
+
+      <div class="hyd-control">
+        <div class="hyd-label">
+          <svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+          Boom
+        </div>
+        <div class="hyd-slider-wrap">
+          <button class="hyd-btn hyd-btn-up" data-axis="boom" data-dir="1">&#9650;</button>
+          <div class="hyd-track">
+            <div class="hyd-fill" id="boom-fill"></div>
+            <div class="hyd-thumb" id="boom-thumb"></div>
+          </div>
+          <button class="hyd-btn hyd-btn-dn" data-axis="boom" data-dir="-1">&#9660;</button>
+        </div>
+        <div class="hyd-value" id="boom-val">50%</div>
+      </div>
+
+      <div class="hyd-control">
+        <div class="hyd-label">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Arm
+        </div>
+        <div class="hyd-slider-wrap">
+          <button class="hyd-btn hyd-btn-up" data-axis="arm" data-dir="1">&#9650;</button>
+          <div class="hyd-track">
+            <div class="hyd-fill" id="arm-fill"></div>
+            <div class="hyd-thumb" id="arm-thumb"></div>
+          </div>
+          <button class="hyd-btn hyd-btn-dn" data-axis="arm" data-dir="-1">&#9660;</button>
+        </div>
+        <div class="hyd-value" id="arm-val">50%</div>
+      </div>
+
+      <div class="hyd-control">
+        <div class="hyd-label">
+          <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          Bucket
+        </div>
+        <div class="hyd-slider-wrap">
+          <button class="hyd-btn hyd-btn-up" data-axis="bucket" data-dir="1">&#9650;</button>
+          <div class="hyd-track">
+            <div class="hyd-fill" id="bucket-fill"></div>
+            <div class="hyd-thumb" id="bucket-thumb"></div>
+          </div>
+          <button class="hyd-btn hyd-btn-dn" data-axis="bucket" data-dir="-1">&#9660;</button>
+        </div>
+        <div class="hyd-value" id="bucket-val">50%</div>
+      </div>
+
+      <div class="hyd-control">
+        <div class="hyd-label">
+          <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          Swing
+        </div>
+        <div class="swing-control">
+          <button class="swing-btn" data-dir="left" id="swing-left">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            L
+          </button>
+          <div class="swing-indicator">
+            <div class="swing-arc">
+              <div class="swing-needle" id="swing-needle"></div>
+              <div class="swing-center-dot"></div>
+            </div>
+            <div class="swing-deg" id="swing-deg">0°</div>
+          </div>
+          <button class="swing-btn" data-dir="right" id="swing-right">
+            R
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="hyd-pressure-row">
+        <div class="mini-gauge">
+          <svg class="arc-gauge" viewBox="0 0 80 50">
+            <path class="arc-bg" d="M10 45 A35 35 0 0 1 70 45"/>
+            <path class="arc-val" id="hyd-arc" d="M10 45 A35 35 0 0 1 70 45" stroke-dasharray="110 110"/>
+          </svg>
+          <div class="mini-gauge-val" id="hyd-pres-val">--</div>
+          <div class="mini-gauge-label">HYD bar</div>
+        </div>
+        <div class="mini-gauge">
+          <svg class="arc-gauge" viewBox="0 0 80 50">
+            <path class="arc-bg" d="M10 45 A35 35 0 0 1 70 45"/>
+            <path class="arc-val secondary" id="hyd-temp-arc" d="M10 45 A35 35 0 0 1 70 45" stroke-dasharray="110 110"/>
+          </svg>
+          <div class="mini-gauge-val" id="hyd-temp-val">--</div>
+          <div class="mini-gauge-label">HYD °C</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ─────────────────────────── CENTER PANEL -->
+    <section class="panel panel-center">
+
+      <!-- Quick vitals -->
+      <div class="vitals-row">
+        <div class="vital" id="vital-fuel">
+          <svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14M9 22v-7h6v7"/><path d="M19 8h2a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/></svg>
+          <div class="vital-bar-wrap">
+            <div class="vital-bar" id="fuel-bar"></div>
+          </div>
+          <span class="vital-label">Fuel <span id="fuel-pct">--</span>%</span>
+        </div>
+        <div class="vital" id="vital-eng-temp">
+          <svg viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
+          <div class="vital-bar-wrap">
+            <div class="vital-bar" id="eng-temp-bar"></div>
+          </div>
+          <span class="vital-label">Eng <span id="eng-temp-val">--</span>°C</span>
+        </div>
+        <div class="vital" id="vital-def">
+          <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M7 7l10 10M17 7 7 17"/></svg>
+          <div class="vital-bar-wrap">
+            <div class="vital-bar" id="def-bar"></div>
+          </div>
+          <span class="vital-label">DEF <span id="def-pct">--</span>%</span>
+        </div>
+        <div class="vital" id="vital-bat">
+          <svg viewBox="0 0 24 24"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/><line x1="7" y1="12" x2="7" y2="12"/><line x1="12" y1="9" x2="12" y2="15"/></svg>
+          <div class="vital-bar-wrap">
+            <div class="vital-bar" id="bat-bar"></div>
+          </div>
+          <span class="vital-label">Bat <span id="bat-val">--</span>V</span>
+        </div>
+      </div>
+
+      <!-- Main gauges -->
+      <div class="gauges-row">
+        <!-- RPM gauge -->
+        <div class="gauge-container">
+          <svg class="dial-gauge" viewBox="0 0 200 130" id="rpm-gauge">
+            <defs>
+              <linearGradient id="rpmGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#22d3ee"/>
+                <stop offset="60%"  stop-color="#f59e0b"/>
+                <stop offset="85%"  stop-color="#ef4444"/>
+              </linearGradient>
+            </defs>
+            <!-- track -->
+            <path class="dial-track" d="M20 110 A85 85 0 0 1 180 110"/>
+            <!-- value arc -->
+            <path class="dial-arc" id="rpm-arc" stroke="url(#rpmGrad)" d="M20 110 A85 85 0 0 1 180 110" stroke-dasharray="0 267"/>
+            <!-- ticks -->
+            <g class="dial-ticks" id="rpm-ticks"></g>
+            <!-- needle -->
+            <line class="dial-needle" id="rpm-needle" x1="100" y1="110" x2="100" y2="40"/>
+            <circle cx="100" cy="110" r="6" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+            <!-- label -->
+            <text class="dial-value" x="100" y="105" id="rpm-val-text">0</text>
+            <text class="dial-unit" x="100" y="125">RPM ×100</text>
+          </svg>
+          <div class="gauge-label">Engine Speed</div>
+        </div>
+
+        <!-- Center display -->
+        <div class="center-display">
+          <div class="work-mode-display" id="work-mode-display">
+            <div class="wmd-icon">
+              <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="wmd-text">POWER</div>
+          </div>
+          <div class="machine-viz">
+            <!-- Simple SVG schematic of excavator arm -->
+            <svg viewBox="0 0 240 160" class="machine-svg" id="machine-svg">
+              <!-- Undercarriage -->
+              <rect x="20" y="120" width="200" height="18" rx="4" class="mach-body"/>
+              <rect x="14" y="118" width="212" height="10" rx="3" class="mach-track"/>
+              <!-- Sprockets -->
+              <circle cx="26" cy="128" r="9" class="mach-wheel"/>
+              <circle cx="214" cy="128" r="9" class="mach-wheel"/>
+              <circle cx="80" cy="128" r="6" class="mach-wheel-s"/>
+              <circle cx="120" cy="128" r="6" class="mach-wheel-s"/>
+              <circle cx="160" cy="128" r="6" class="mach-wheel-s"/>
+              <!-- House / cab -->
+              <rect x="60" y="90" width="120" height="32" rx="4" class="mach-body"/>
+              <rect x="68" y="82" width="80" height="16" rx="3" class="mach-cab"/>
+              <rect x="90" y="84" width="20" height="12" rx="2" class="mach-glass"/>
+              <!-- Boom (dynamic) -->
+              <line id="svg-boom" x1="80" y1="98" x2="80" y2="55" class="mach-arm" stroke-width="8"/>
+              <!-- Arm (dynamic) -->
+              <line id="svg-arm" x1="80" y1="55" x2="110" y2="30" class="mach-arm" stroke-width="6"/>
+              <!-- Bucket (dynamic) -->
+              <path id="svg-bucket" d="M110 30 L125 20 L130 35 L115 42 Z" class="mach-bucket"/>
+            </svg>
+          </div>
+          <div class="center-stats">
+            <div class="cs-item">
+              <span class="cs-key">Load Factor</span>
+              <span class="cs-val" id="cs-load">--</span>
+            </div>
+            <div class="cs-item">
+              <span class="cs-key">Op. Hours</span>
+              <span class="cs-val" id="cs-hours">--</span>
+            </div>
+            <div class="cs-item">
+              <span class="cs-key">Next Svc</span>
+              <span class="cs-val" id="cs-service">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Load / Torque gauge -->
+        <div class="gauge-container">
+          <svg class="dial-gauge" viewBox="0 0 200 130" id="load-gauge">
+            <defs>
+              <linearGradient id="loadGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%"   stop-color="#22d3ee"/>
+                <stop offset="70%"  stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#ef4444"/>
+              </linearGradient>
+            </defs>
+            <path class="dial-track" d="M20 110 A85 85 0 0 1 180 110"/>
+            <path class="dial-arc" id="load-arc" stroke="url(#loadGrad)" d="M20 110 A85 85 0 0 1 180 110" stroke-dasharray="0 267"/>
+            <g class="dial-ticks" id="load-ticks"></g>
+            <line class="dial-needle" id="load-needle" x1="100" y1="110" x2="100" y2="40"/>
+            <circle cx="100" cy="110" r="6" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+            <text class="dial-value" x="100" y="105" id="load-val-text">0</text>
+            <text class="dial-unit" x="100" y="125">Load %</text>
+          </svg>
+          <div class="gauge-label">Engine Load</div>
+        </div>
+      </div>
+
+      <!-- Alert ribbon -->
+      <div class="alert-ribbon" id="alert-ribbon">
+        <div class="alert-item warn" data-code="HYD-TEMP">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          HYD TEMP HIGH
+        </div>
+        <div class="alert-item info" data-code="SVC-DUE">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          SERVICE DUE IN 48h
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────────────────────── RIGHT PANEL: ENGINE & DRIVE -->
+    <aside class="panel panel-right">
+      <div class="panel-title">Engine &amp; Drive</div>
+
+      <!-- Ignition -->
+      <div class="ignition-group">
+        <div class="ign-state" id="ign-state">OFF</div>
+        <button class="ign-btn" id="btn-ignition">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          START / STOP
+        </button>
+      </div>
+
+      <!-- Throttle -->
+      <div class="throttle-group">
+        <div class="throttle-label">Throttle</div>
+        <div class="throttle-track-wrap">
+          <div class="throttle-labels">
+            <span>MAX</span><span>MIN</span>
+          </div>
+          <div class="throttle-track" id="throttle-track">
+            <div class="throttle-fill" id="throttle-fill"></div>
+            <div class="throttle-thumb" id="throttle-thumb"></div>
+          </div>
+        </div>
+        <div class="throttle-val" id="throttle-val">0%</div>
+        <div class="throttle-btns">
+          <button class="thr-btn" id="thr-dn">&#9660;</button>
+          <button class="thr-btn" id="thr-up">&#9650;</button>
+        </div>
+      </div>
+
+      <!-- Work mode -->
+      <div class="mode-group">
+        <div class="mode-label">Work Mode</div>
+        <div class="mode-btns">
+          <button class="mode-btn active" data-mode="POWER" data-color="power">PWR</button>
+          <button class="mode-btn" data-mode="STANDARD" data-color="standard">STD</button>
+          <button class="mode-btn" data-mode="ECO" data-color="eco">ECO</button>
+          <button class="mode-btn" data-mode="FINE" data-color="fine">FINE</button>
+        </div>
+      </div>
+
+      <!-- Travel speed -->
+      <div class="travel-group">
+        <div class="travel-label">Travel Speed</div>
+        <div class="travel-btns">
+          <button class="travel-btn active" data-speed="1">&#x1F422; LOW</button>
+          <button class="travel-btn" data-speed="2">MED</button>
+          <button class="travel-btn" data-speed="3">&#x26A1; HIGH</button>
+        </div>
+      </div>
+
+      <!-- Pitch / Tilt -->
+      <div class="tilt-group">
+        <div class="tilt-label">Machine Level</div>
+        <div class="level-bubble-wrap">
+          <div class="level-grid">
+            <div class="level-line h"></div>
+            <div class="level-line v"></div>
+          </div>
+          <div class="level-bubble" id="level-bubble"></div>
+        </div>
+        <div class="tilt-vals">
+          <span>P: <strong id="tilt-pitch">0.0°</strong></span>
+          <span>R: <strong id="tilt-roll">0.0°</strong></span>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════ BOTTOM BAR -->
+  <footer class="bottom-bar">
+
+    <div class="bb-group">
+      <button class="bb-btn" id="btn-lights-work" title="Work Lights">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        Work
+      </button>
+      <button class="bb-btn" id="btn-lights-travel" title="Travel Lights">
+        <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        Travel
+      </button>
+      <button class="bb-btn" id="btn-lights-cabin" title="Cabin Light">
+        <svg viewBox="0 0 24 24"><path d="M21 10H3M21 6H3M21 14H3M21 18H3"/></svg>
+        Cabin
+      </button>
+    </div>
+
+    <div class="bb-group">
+      <button class="bb-btn" id="btn-attach-1" title="Attachment 1">
+        <svg viewBox="0 0 24 24"><path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Bucket
+      </button>
+      <button class="bb-btn" id="btn-attach-2" title="Attachment 2">
+        <svg viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9 6 3z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><line x1="2" y1="9" x2="22" y2="9"/></svg>
+        Hammer
+      </button>
+      <button class="bb-btn" id="btn-attach-3" title="Attachment 3">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Clamshell
+      </button>
+    </div>
+
+    <div class="bb-group">
+      <button class="bb-btn danger" id="btn-horn" title="Horn">
+        <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        Horn
+      </button>
+      <button class="bb-btn warn" id="btn-safety-lock" title="Safety Lock">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span id="lock-label">LOCKED</span>
+      </button>
+      <button class="bb-btn" id="btn-emer-stop" title="Emergency Stop">
+        <svg viewBox="0 0 24 24"><octagon/><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        E-STOP
+      </button>
+    </div>
+
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════ OVERLAY: ALERTS -->
+  <div class="overlay" id="overlay-alerts" hidden>
+    <div class="overlay-card">
+      <div class="overlay-title">
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        Active Alerts
+      </div>
+      <ul class="alert-list" id="alert-list">
+        <li class="al-item warn"><span class="al-code">HYD-TEMP</span><span class="al-msg">Hydraulic oil temperature above 85°C — reduce load or pause operation.</span></li>
+        <li class="al-item info"><span class="al-code">SVC-DUE</span><span class="al-msg">Next service interval in approximately 48 operating hours.</span></li>
+      </ul>
+      <button class="overlay-close" id="close-alerts">&#x2715; Close</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ OVERLAY: E-STOP -->
+  <div class="overlay estop-overlay" id="overlay-estop" hidden>
+    <div class="estop-card">
+      <svg viewBox="0 0 24 24" class="estop-icon"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+      <div class="estop-title">EMERGENCY STOP</div>
+      <div class="estop-sub">All hydraulic functions suspended</div>
+      <button class="estop-reset" id="btn-estop-reset">RESET &amp; RESUME</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
