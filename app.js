@@ -6,291 +6,203 @@
 
 /* ─── State ─────────────────────────────────────────────────────── */
 const state = {
-  engine:    false,   // running
-  starting:  false,
-  estop:     false,
-  locked:    true,
+  engine:   false,
+  starting: false,
+  estop:    false,
+  locked:   true,
 
   throttle:  0,       // 0–100
-  workMode:  'POWER',
+  workMode: 'POWER',
+  travelSpeed: 1,
 
-  // Hydraulics 0–100 (50 = neutral)
-  boom:   50,
+  boom:   50,         // 0–100
   arm:    50,
   bucket: 50,
-  swing:  0,          // degrees -90 to +90
+  swing:  0,          // −90 to +90 degrees
 
-  travelSpeed: 1,     // 1 | 2 | 3
-
-  // Vitals
-  fuel:      78,
+  fuel:       78,
   engineTemp: 0,
-  def:       62,
-  batVolt:   24.6,
+  def:        62,
+  batVolt:    24.6,
 
-  // Dynamic gauges
-  rpm:       0,
-  load:      0,
-  hydPres:   0,
-  hydTemp:   40,
+  rpm:      0,        // displayed as RPM
+  load:     0,        // 0–100 %
+  hydPres:  0,        // 0–350 bar
+  hydTemp:  40,       // °C
 
-  // Lights
   lightsWork:   false,
   lightsTravel: false,
   lightsCabin:  false,
 
-  // Attachment
-  activeAttach: 'Bucket',
-
-  // Tilt (simulated)
   pitch: 0,
   roll:  0,
 
-  // Op hours
   opHours: 1483.2,
-
   tick: 0,
 };
 
 /* ─── Helpers ────────────────────────────────────────────────────── */
-const $ = id => document.getElementById(id);
-const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const $  = id => document.getElementById(id);
+const cl = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 /* ─── Clock ──────────────────────────────────────────────────────── */
 function updateClock() {
   const now = new Date();
-  const hh  = String(now.getHours()).padStart(2, '0');
-  const mm  = String(now.getMinutes()).padStart(2, '0');
-  $('clock').textContent = `${hh}:${mm}`;
+  $('clock').textContent =
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0');
 }
 updateClock();
-setInterval(updateClock, 10000);
+setInterval(updateClock, 10_000);
 
-/* ─── Dial Gauge helpers ─────────────────────────────────────────── */
-// Arc path for a 270° dial: 0→267 dasharray, -135°→+135°
-const DIAL_ARC_LEN = 267;
-
-function buildTicks(containerId, count, majorEvery, maxVal) {
-  const g = $(containerId);
-  if (!g) return;
-  const cx = 100, cy = 110, r = 85;
-  for (let i = 0; i <= count; i++) {
-    const angle = -135 + (270 / count) * i;
-    const rad   = (angle * Math.PI) / 180;
-    const isMajor = (i % majorEvery === 0);
-    const inner = r - (isMajor ? 12 : 7);
-    const outer = r - 2;
-    const x1 = cx + outer * Math.cos(rad);
-    const y1 = cy + outer * Math.sin(rad);
-    const x2 = cx + inner * Math.cos(rad);
-    const y2 = cy + inner * Math.sin(rad);
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-    line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-    if (isMajor) line.classList.add('major');
-    g.appendChild(line);
-
-    if (isMajor) {
-      const labelR = r - 20;
-      const lx = cx + labelR * Math.cos(rad);
-      const ly = cy + labelR * Math.sin(rad);
-      const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-      txt.setAttribute('x', lx);
-      txt.setAttribute('y', ly);
-      txt.textContent = Math.round((maxVal / count) * i);
-      g.appendChild(txt);
-    }
-  }
+/* ─── Ring gauge ─────────────────────────────────────────────────── */
+// Reads r from the SVG circle element so it works at any size.
+// stroke-dasharray = C, stroke-dashoffset = C*(1−pct), rotate −90°
+function setRing(id, value, maxVal) {
+  const circle = $(id);
+  if (!circle) return;
+  const r    = parseFloat(circle.getAttribute('r') || 38);
+  const circ = 2 * Math.PI * r;
+  const pct  = cl(value / maxVal, 0, 1);
+  circle.style.strokeDasharray  = `${circ} ${circ}`;
+  circle.style.strokeDashoffset = circ * (1 - pct);
 }
 
-buildTicks('rpm-ticks',  20, 4, 40);   // 0–4000 RPM  (×100 → 0–40)
-buildTicks('load-ticks', 10, 2, 100);  // 0–100 %
+// Initialise all rings to zero
+['boom-ring','arm-ring','bucket-ring','rpm-ring','load-ring','throttle-ring'].forEach(id => {
+  const el = $(id);
+  if (!el) return;
+  const r    = parseFloat(el.getAttribute('r') || 38);
+  const circ = 2 * Math.PI * r;
+  el.style.strokeDasharray  = `${circ} ${circ}`;
+  el.style.strokeDashoffset = `${circ}`;
+});
 
-function setDial(arcId, needleId, valTextId, value, maxVal) {
-  const pct    = clamp(value / maxVal, 0, 1);
-  const filled = pct * DIAL_ARC_LEN;
-  const angle  = -135 + pct * 270;
-
-  const arc    = $(arcId);
-  const needle = $(needleId);
-  const valTxt = $(valTextId);
-
-  if (arc)    arc.style.strokeDasharray = `${filled} ${DIAL_ARC_LEN}`;
-  if (needle) needle.style.transform    = `rotate(${angle}deg)`;
-  if (valTxt) valTxt.textContent        = Math.round(value);
+/* ─── Hydraulic rings + buttons ──────────────────────────────────── */
+function updateHyd(axis) {
+  const val = state[axis];
+  setRing(axis + '-ring', val, 100);
+  $(axis + '-val').textContent = Math.round(val);
 }
 
-/* ─── Mini arc gauge ─────────────────────────────────────────────── */
-const ARC_LEN = 110;
-
-function setMiniArc(arcId, value, maxVal) {
-  const arc = $(arcId);
-  if (!arc) return;
-  const pct    = clamp(value / maxVal, 0, 1);
-  const filled = pct * ARC_LEN;
-  arc.style.strokeDasharray = `${filled} ${ARC_LEN}`;
-}
-
-/* ─── Hydraulic sliders ──────────────────────────────────────────── */
-function updateHydSlider(axis) {
-  const val  = state[axis];           // 0–100
-  const fill = $(axis + '-fill');
-  const thumb= $(axis + '-thumb');
-  const lbl  = $(axis + '-val');
-  const pct  = (val / 100) * 100;
-
-  if (fill)  fill.style.height  = pct + '%';
-  if (thumb) thumb.style.bottom = pct + '%';
-  if (lbl)   lbl.textContent    = Math.round(val) + '%';
-}
-
-['boom', 'arm', 'bucket'].forEach(axis => {
+['boom','arm','bucket'].forEach(axis => {
   document.querySelectorAll(`[data-axis="${axis}"]`).forEach(btn => {
-    let interval = null;
+    let iv = null;
     const step = () => {
-      const dir = parseInt(btn.dataset.dir, 10);
-      state[axis] = clamp(state[axis] + dir * 4, 0, 100);
-      updateHydSlider(axis);
+      state[axis] = cl(state[axis] + parseInt(btn.dataset.dir, 10) * 4, 0, 100);
+      updateHyd(axis);
       updateMachineSvg();
     };
-    btn.addEventListener('pointerdown', () => { step(); interval = setInterval(step, 120); });
-    const stop = () => { clearInterval(interval); interval = null; };
-    btn.addEventListener('pointerup',   stop);
-    btn.addEventListener('pointerleave',stop);
+    btn.addEventListener('pointerdown', () => { step(); iv = setInterval(step, 120); });
+    const stop = () => { clearInterval(iv); iv = null; };
+    btn.addEventListener('pointerup',    stop);
+    btn.addEventListener('pointerleave', stop);
   });
-  updateHydSlider(axis);
+  updateHyd(axis);
 });
 
 /* ─── Swing ──────────────────────────────────────────────────────── */
+// Needle rotates on a 180° arc: −90° → left extreme, +90° → right extreme
+// SVG arc path: M8 48 A40 40 0 0 1 82 48  (half circle, total ~125px arc)
+// Arc length: π × r = π × 40 ≈ 125.7
+const SWING_ARC = Math.PI * 40;
+
 function updateSwing() {
+  const pct    = (state.swing + 90) / 180;   // 0 at −90°, 1 at +90°
+  const filled = pct * SWING_ARC;
   const needle = $('swing-needle');
+  const arc    = $('swing-arc-fill');
   const deg    = $('swing-deg');
-  if (needle) needle.style.transform = `translateX(-50%) rotate(${state.swing}deg)`;
-  if (deg)    deg.textContent        = (state.swing > 0 ? '+' : '') + state.swing + '°';
+  if (needle) needle.style.transform = `rotate(${state.swing}deg)`;
+  if (arc)    arc.style.strokeDasharray = `${filled} ${SWING_ARC}`;
+  if (deg)    deg.textContent = (state.swing > 0 ? '+' : '') + state.swing + '°';
 }
 
-let swingInterval = null;
-function startSwing(dir) {
-  swingInterval = setInterval(() => {
-    state.swing = clamp(state.swing + dir * 3, -90, 90);
-    updateSwing();
-  }, 80);
-}
-function stopSwing() { clearInterval(swingInterval); swingInterval = null; }
-
+let swingIv = null;
+const startSwing = dir => { swingIv = setInterval(() => { state.swing = cl(state.swing + dir * 3, -90, 90); updateSwing(); }, 80); };
+const stopSwing  = ()  => { clearInterval(swingIv); swingIv = null; };
 $('swing-left') .addEventListener('pointerdown', () => startSwing(-1));
 $('swing-right').addEventListener('pointerdown', () => startSwing( 1));
-['swing-left', 'swing-right'].forEach(id => {
-  $( id).addEventListener('pointerup',    stopSwing);
+['swing-left','swing-right'].forEach(id => {
+  $(id).addEventListener('pointerup',    stopSwing);
   $(id).addEventListener('pointerleave', stopSwing);
 });
 updateSwing();
 
-/* ─── Machine SVG schematic (simple kinematic) ───────────────────── */
+/* ─── Machine SVG schematic ──────────────────────────────────────── */
 function updateMachineSvg() {
-  const boomAngle   = -90 + (state.boom   / 100) * 70;  // -90 to -20
-  const armAngle    = boomAngle + 30 + (state.arm   / 100) * 50;
-  const bucketAngle = armAngle  + 20 + (state.bucket/ 100) * 40;
+  const toRad   = a => a * Math.PI / 180;
+  const boomAng = -90 + (state.boom   / 100) * 65;
+  const armAng  = boomAng + 35 + (state.arm   / 100) * 45;
+  const bktAng  = armAng  + 20 + (state.bucket/ 100) * 40;
 
-  const toRad = a => a * Math.PI / 180;
-  const boomLen = 55, armLen = 42;
-  const bx = 80, by = 98;
+  const boomLen = 52, armLen = 40;
+  const bx = 80, by = 96;
+  const bx2 = bx + boomLen * Math.cos(toRad(boomAng));
+  const by2 = by + boomLen * Math.sin(toRad(boomAng));
+  const ax2 = bx2 + armLen * Math.cos(toRad(armAng));
+  const ay2 = by2 + armLen * Math.sin(toRad(armAng));
 
-  const boomX2 = bx + boomLen * Math.cos(toRad(boomAngle));
-  const boomY2 = by + boomLen * Math.sin(toRad(boomAngle));
+  const bLen = 16;
+  const b1x = ax2 + bLen * Math.cos(toRad(bktAng - 30));
+  const b1y = ay2 + bLen * Math.sin(toRad(bktAng - 30));
+  const b2x = ax2 + bLen * Math.cos(toRad(bktAng + 30));
+  const b2y = ay2 + bLen * Math.sin(toRad(bktAng + 30));
 
-  const armX2  = boomX2 + armLen * Math.cos(toRad(armAngle));
-  const armY2  = boomY2 + armLen * Math.sin(toRad(armAngle));
-
-  const bLen = 18;
-  const b1x = armX2 + bLen * Math.cos(toRad(bucketAngle - 30));
-  const b1y = armY2 + bLen * Math.sin(toRad(bucketAngle - 30));
-  const b2x = armX2 + bLen * Math.cos(toRad(bucketAngle + 30));
-  const b2y = armY2 + bLen * Math.sin(toRad(bucketAngle + 30));
-
-  const svgBoom   = $('svg-boom');
-  const svgArm    = $('svg-arm');
-  const svgBucket = $('svg-bucket');
-
-  if (svgBoom) {
-    svgBoom.setAttribute('x1', bx);
-    svgBoom.setAttribute('y1', by);
-    svgBoom.setAttribute('x2', boomX2);
-    svgBoom.setAttribute('y2', boomY2);
-  }
-  if (svgArm) {
-    svgArm.setAttribute('x1', boomX2);
-    svgArm.setAttribute('y1', boomY2);
-    svgArm.setAttribute('x2', armX2);
-    svgArm.setAttribute('y2', armY2);
-  }
-  if (svgBucket) {
-    svgBucket.setAttribute('d',
-      `M${armX2} ${armY2} L${b1x} ${b1y} L${b2x} ${b2y} Z`
-    );
-  }
+  const sb = $('svg-boom'), sa = $('svg-arm'), sk = $('svg-bucket');
+  if (sb) { sb.setAttribute('x1',bx); sb.setAttribute('y1',by); sb.setAttribute('x2',bx2); sb.setAttribute('y2',by2); }
+  if (sa) { sa.setAttribute('x1',bx2); sa.setAttribute('y1',by2); sa.setAttribute('x2',ax2); sa.setAttribute('y2',ay2); }
+  if (sk) sk.setAttribute('d', `M${ax2} ${ay2} L${b1x} ${b1y} L${b2x} ${b2y} Z`);
 }
 updateMachineSvg();
 
 /* ─── Throttle ───────────────────────────────────────────────────── */
 function updateThrottleUI() {
-  const pct  = state.throttle;
-  $('throttle-fill').style.height  = pct + '%';
-  $('throttle-thumb').style.bottom = pct + '%';
-  $('throttle-val').textContent    = pct + '%';
+  setRing('throttle-ring', state.throttle, 100);
+  $('throttle-val').textContent       = state.throttle + '%';
+  $('throttle-val-ring').textContent  = state.throttle;
 }
 
-$('thr-up').addEventListener('click', () => {
-  state.throttle = clamp(state.throttle + 5, 0, 100);
-  updateThrottleUI();
-});
-$('thr-dn').addEventListener('click', () => {
-  state.throttle = clamp(state.throttle - 5, 0, 100);
-  updateThrottleUI();
-});
-
-// Drag/touch on throttle track
-const throttleTrack = $('throttle-track');
-let throttleDragging = false;
-
-function setThrottleFromY(e) {
-  const rect = throttleTrack.getBoundingClientRect();
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  const ratio = clamp((rect.bottom - clientY) / rect.height, 0, 1);
-  state.throttle = Math.round(ratio * 100);
-  updateThrottleUI();
-}
-
-throttleTrack.addEventListener('pointerdown', e => { throttleDragging = true; setThrottleFromY(e); });
-document.addEventListener('pointermove', e => { if (throttleDragging) setThrottleFromY(e); });
-document.addEventListener('pointerup',   () => { throttleDragging = false; });
+$('thr-up').addEventListener('click', () => { state.throttle = cl(state.throttle + 5, 0, 100); updateThrottleUI(); });
+$('thr-dn').addEventListener('click', () => { state.throttle = cl(state.throttle - 5, 0, 100); updateThrottleUI(); });
+updateThrottleUI();
 
 /* ─── Ignition ───────────────────────────────────────────────────── */
+function setEngineState(state_str) {
+  const dot  = $('ign-dot');
+  const txt  = $('ign-state');
+  dot.className  = 'ign-state-dot ' + state_str;
+  txt.className  = 'ign-state-text ' + state_str;
+  txt.textContent = state_str.toUpperCase();
+}
+
+function setTopBarStatus(label, sub, iconClass) {
+  $('tb-status-main').textContent = label;
+  $('tb-status-sub').textContent  = sub;
+  const icon = $('tb-status-icon');
+  icon.className = 'tb-status-icon ' + iconClass;
+}
+
 $('btn-ignition').addEventListener('click', () => {
-  if (state.estop) return;
-  if (state.starting) return;
+  if (state.estop || state.starting) return;
 
   if (state.engine) {
-    // Stop
     state.engine   = false;
     state.throttle = 0;
     updateThrottleUI();
-    $('ign-state').textContent = 'OFF';
-    $('ign-state').className   = 'ign-state';
+    setEngineState('stopped');
     $('btn-ignition').classList.remove('on');
-    document.querySelector('.status-pill').textContent = 'OPERATIONAL';
-    document.querySelector('.status-pill').className   = 'status-pill active';
+    setTopBarStatus('STOPPED', 'Engine off · Ready', 'stopped');
   } else {
-    // Start sequence
     state.starting = true;
-    $('ign-state').textContent = 'STARTING';
-    $('ign-state').className   = 'ign-state starting';
+    setEngineState('starting');
+    setTopBarStatus('STARTING', 'Ignition sequence…', 'starting');
     setTimeout(() => {
       state.engine   = true;
       state.starting = false;
-      $('ign-state').textContent = 'RUNNING';
-      $('ign-state').className   = 'ign-state running';
+      setEngineState('running');
       $('btn-ignition').classList.add('on');
+      setTopBarStatus('RUNNING', 'All systems nominal', 'running');
     }, 2200);
   }
 });
@@ -301,29 +213,11 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     state.workMode = btn.dataset.mode;
-    updateWorkModeDisplay();
+    $('tb-mode-val').textContent = state.workMode;
   });
 });
 
-const modeIcons = {
-  POWER:    '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-  STANDARD: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-  ECO:      '<svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>',
-  FINE:     '<svg viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>',
-};
-
-function updateWorkModeDisplay() {
-  const display = $('work-mode-display');
-  const icon    = display.querySelector('.wmd-icon');
-  const text    = display.querySelector('.wmd-text');
-  icon.innerHTML = modeIcons[state.workMode] || modeIcons.POWER;
-  icon.querySelector('svg').style.cssText = 'width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;';
-  text.textContent = state.workMode;
-  display.className = `work-mode-display mode-${state.workMode.toLowerCase()}`;
-}
-updateWorkModeDisplay();
-
-/* ─── Travel speed ───────────────────────────────────────────────── */
+/* ─── Travel Speed ───────────────────────────────────────────────── */
 document.querySelectorAll('.travel-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.travel-btn').forEach(b => b.classList.remove('active'));
@@ -345,9 +239,9 @@ document.querySelectorAll('.travel-btn').forEach(btn => {
 });
 
 /* ─── Attachments ────────────────────────────────────────────────── */
-document.querySelectorAll('[id^="btn-attach-"]').forEach(btn => {
+document.querySelectorAll('.ab-att').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('[id^="btn-attach-"]').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.ab-att').forEach(b => b.classList.remove('on'));
     btn.classList.add('on');
   });
 });
@@ -360,191 +254,161 @@ $('btn-safety-lock').addEventListener('click', () => {
 });
 
 /* ─── Horn ───────────────────────────────────────────────────────── */
-$('btn-horn').addEventListener('pointerdown', () => $('btn-horn').style.opacity = '.6');
-$('btn-horn').addEventListener('pointerup',   () => $('btn-horn').style.opacity = '');
+const horn = $('btn-horn');
+horn.addEventListener('pointerdown', () => horn.classList.add('on'));
+horn.addEventListener('pointerup',   () => horn.classList.remove('on'));
 
 /* ─── E-Stop ─────────────────────────────────────────────────────── */
 $('btn-emer-stop').addEventListener('click', () => {
-  state.estop   = true;
-  state.engine  = false;
+  state.estop    = true;
+  state.engine   = false;
   state.throttle = 0;
   updateThrottleUI();
-  $('ign-state').textContent = 'E-STOP';
-  $('ign-state').className   = 'ign-state fault';
+  setEngineState('fault');
   $('btn-ignition').classList.remove('on');
+  setTopBarStatus('E-STOP', 'All hydraulics suspended', 'fault');
   $('overlay-estop').hidden = false;
-
-  document.querySelector('.status-pill').textContent = 'FAULT';
-  document.querySelector('.status-pill').className   = 'status-pill fault';
 });
 
 $('btn-estop-reset').addEventListener('click', () => {
   state.estop = false;
   $('overlay-estop').hidden = true;
-  $('ign-state').textContent = 'OFF';
-  $('ign-state').className   = 'ign-state';
-  document.querySelector('.status-pill').textContent = 'OPERATIONAL';
-  document.querySelector('.status-pill').className   = 'status-pill active';
+  setEngineState('stopped');
+  setTopBarStatus('STOPPED', 'Engine off · Ready', 'stopped');
 });
 
 /* ─── Alert overlay ──────────────────────────────────────────────── */
-$('btn-alert-bar').addEventListener('click', () => {
-  $('overlay-alerts').hidden = false;
-});
-$('close-alerts').addEventListener('click', () => {
-  $('overlay-alerts').hidden = true;
-});
+$('btn-alert-bar').addEventListener('click', () => { $('overlay-alerts').hidden = false; });
+$('close-alerts').addEventListener('click',  () => { $('overlay-alerts').hidden = true; });
 
-/* ─── Vitals bars ────────────────────────────────────────────────── */
-function setVitalBar(barId, pct, warnThresh, critThresh) {
-  const bar = $(barId);
-  if (!bar) return;
-  bar.style.width = clamp(pct, 0, 100) + '%';
-  bar.classList.remove('warn', 'crit');
-  if (pct <= critThresh) bar.classList.add('crit');
-  else if (pct <= warnThresh) bar.classList.add('warn');
+/* ─── Vitals ─────────────────────────────────────────────────────── */
+function setVBar(id, pct, warnAt, critAt) {
+  const el = $(id);
+  if (!el) return;
+  el.style.height = cl(pct, 0, 100) + '%';
+  el.classList.remove('warn','crit');
+  if (pct <= critAt) el.classList.add('crit');
+  else if (pct <= warnAt) el.classList.add('warn');
+}
+
+function setTempBar(barId, value, maxVal) {
+  const el = $(barId);
+  if (!el) return;
+  const pct = cl((value / maxVal) * 100, 0, 100);
+  el.style.width = pct + '%';
+  el.classList.remove('warm','hot');
+  if (pct >= 90) el.classList.add('hot');
+  else if (pct >= 70) el.classList.add('warm');
+}
+
+function setHBar(barId, pct, maxPct) {
+  const el = $(barId);
+  if (!el) return;
+  el.style.width = cl((pct / maxPct) * 100, 0, 100) + '%';
 }
 
 function updateVitals() {
-  setVitalBar('fuel-bar',     state.fuel,       25, 10);
-  setVitalBar('eng-temp-bar', (state.engineTemp / 110) * 100, 70, 90);
-  setVitalBar('def-bar',      state.def,        20, 10);
-  setVitalBar('bat-bar',      ((state.batVolt - 20) / 10) * 100, 20, 10);
+  setVBar('fuel-bar', state.fuel, 25, 10);
+  setVBar('def-bar',  state.def,  20, 10);
+  setVBar('bat-bar',  cl((state.batVolt - 20) / 10 * 100, 0, 100), 20, 10);
 
-  $('fuel-pct').textContent   = Math.round(state.fuel);
+  $('fuel-pct').textContent = Math.round(state.fuel);
+  $('def-pct').textContent  = Math.round(state.def);
+  $('bat-val').textContent  = state.batVolt.toFixed(1);
   $('eng-temp-val').textContent = Math.round(state.engineTemp);
-  $('def-pct').textContent    = Math.round(state.def);
-  $('bat-val').textContent    = state.batVolt.toFixed(1);
-}
 
-/* ─── Status indicators ──────────────────────────────────────────── */
-function updateStatusIndicators() {
-  ['ind-gps', 'ind-can', 'ind-telematics'].forEach(id => {
-    $(id).classList.add('ok');
-  });
+  setTempBar('eng-temp-bar', state.engineTemp, 110);
+  setHBar('hyd-pres-bar', state.hydPres, 350);
+  setHBar('hyd-temp-bar', state.hydTemp, 105);
+
+  $('hyd-pres-val').textContent = Math.round(state.hydPres);
+  $('hyd-temp-val').textContent = Math.round(state.hydTemp);
+
+  // Hot color on hyd-temp bar
+  const hb = $('hyd-temp-bar');
+  if (hb) { hb.classList.toggle('hot', state.hydTemp > 85); }
 }
-updateStatusIndicators();
 
 /* ─── Level bubble ───────────────────────────────────────────────── */
-function updateLevelBubble() {
-  const bubble = $('level-bubble');
+function updateLevel() {
   const wrap   = document.querySelector('.level-bubble-wrap');
-  if (!bubble || !wrap) return;
-  const radius = (wrap.offsetWidth / 2) - 12;
-  const px = clamp(state.roll  / 15, -1, 1) * radius;
-  const py = clamp(state.pitch / 15, -1, 1) * radius;
-  bubble.style.transform = `translate(calc(-50% + ${px}px), calc(-50% + ${py}px))`;
+  const bubble = $('level-bubble');
+  if (!wrap || !bubble) return;
+  const r  = wrap.offsetWidth / 2 - 12;
+  const px = cl(state.roll  / 15, -1, 1) * r;
+  const py = cl(state.pitch / 15, -1, 1) * r;
+  bubble.style.top  = `calc(50% + ${py}px)`;
+  bubble.style.left = `calc(50% + ${px}px)`;
   $('tilt-pitch').textContent = state.pitch.toFixed(1) + '°';
   $('tilt-roll').textContent  = state.roll.toFixed(1)  + '°';
 }
 
 /* ─── Center stats ───────────────────────────────────────────────── */
-function updateCenterStats() {
-  const loadFactor = state.engine ? Math.round(state.load) : 0;
-  $('cs-load').textContent    = loadFactor + '%';
-  $('cs-hours').textContent   = state.opHours.toFixed(1) + 'h';
-  $('cs-service').textContent = (500 - (state.opHours % 500)).toFixed(0) + 'h';
+function updateStats() {
+  $('cs-load').textContent    = Math.round(state.load) + '%';
+  $('cs-hours').textContent   = state.opHours.toFixed(1) + ' h';
+  $('cs-service').textContent = (500 - (state.opHours % 500)).toFixed(0) + ' h';
 }
 
 /* ─── Simulation loop ────────────────────────────────────────────── */
-// Smoothly simulates engine dynamics based on state
-let prevRpm  = 0;
-let prevLoad = 0;
+let _rpm = 0, _load = 0;
 
-function simulationTick() {
+function tick() {
   state.tick++;
   const t = state.tick;
 
   if (state.engine && !state.estop) {
-    // RPM follows throttle with some lag + idle
-    const modeFactor = { POWER: 1.0, STANDARD: 0.85, ECO: 0.70, FINE: 0.60 }[state.workMode] || 1.0;
-    const targetRpm  = 8 + state.throttle * 0.32 * modeFactor; // 0–40 range (×100)
-    prevRpm  = prevRpm + (targetRpm - prevRpm) * 0.08;
-    state.rpm = prevRpm + Math.sin(t * 0.5) * 0.3;  // slight vibration
+    const mf = { POWER:1.0, STANDARD:.85, ECO:.70, FINE:.60 }[state.workMode] || 1.0;
+    const targetRpm  = 800 + state.throttle * 32 * mf;  // 800–4000 RPM
+    _rpm  += (targetRpm  - _rpm)  * 0.08;
+    state.rpm = _rpm + Math.sin(t * .5) * 12;
 
-    // Load based on hydraulic activity
-    const hydActivity = Math.abs(state.boom - 50) + Math.abs(state.arm - 50) + Math.abs(state.bucket - 50);
-    const targetLoad  = clamp((hydActivity / 150) * 70 + state.throttle * 0.25, 0, 100);
-    prevLoad = prevLoad + (targetLoad - prevLoad) * 0.06;
-    state.load = prevLoad + Math.sin(t * 0.8) * 1.5;
+    const hydAct = Math.abs(state.boom-50) + Math.abs(state.arm-50) + Math.abs(state.bucket-50);
+    const targetLoad = cl((hydAct / 150) * 70 + state.throttle * .25, 0, 100);
+    _load += (targetLoad - _load) * 0.06;
+    state.load = _load + Math.sin(t * .8) * 1.5;
 
-    // Hydraulic pressure tracks load
-    state.hydPres = clamp(150 + state.load * 2.2 + Math.sin(t * 0.6) * 8, 0, 350);
+    state.hydPres = cl(150 + state.load * 2.2 + Math.sin(t * .6) * 8, 0, 350);
 
-    // Hydraulic temp rises with load
-    const heatRate = (state.hydPres / 350) * 0.03 - 0.005;
-    state.hydTemp  = clamp(state.hydTemp + heatRate + Math.sin(t * 0.2) * 0.02, 40, 105);
+    const hr = (state.hydPres / 350) * .03 - .005;
+    state.hydTemp = cl(state.hydTemp + hr + Math.sin(t * .2) * .02, 40, 105);
 
-    // Engine temp
-    const engHeat = state.throttle * 0.004 - 0.01;
-    state.engineTemp = clamp(state.engineTemp + engHeat, 0, 110);
+    const eh = state.throttle * .004 - .01;
+    state.engineTemp = cl(state.engineTemp + eh, 0, 110);
 
-    // Fuel consumption
-    if (t % 20 === 0) {
-      state.fuel = clamp(state.fuel - 0.004 * (state.throttle / 100 + 0.3), 0, 100);
-    }
+    if (t % 20 === 0) state.fuel = cl(state.fuel - .004 * (state.throttle / 100 + .3), 0, 100);
+    if (t % 36 === 0) state.opHours += 0.01;
 
-    // Op hours
-    if (t % 36 === 0) {
-      state.opHours += 0.01;  // approx real-time scaling
-    }
   } else {
-    // Cool down
-    prevRpm  = prevRpm * 0.94;
-    prevLoad = prevLoad * 0.9;
-    state.rpm      = prevRpm;
-    state.load     = prevLoad;
-    state.hydPres  = Math.max(0, state.hydPres * 0.97);
-    state.hydTemp  = Math.max(40, state.hydTemp - 0.05);
-    state.engineTemp = Math.max(0, state.engineTemp - 0.08);
+    _rpm  *= .94; _load *= .9;
+    state.rpm      = _rpm;
+    state.load     = _load;
+    state.hydPres  = Math.max(0,   state.hydPres  * .97);
+    state.hydTemp  = Math.max(40,  state.hydTemp  - .05);
+    state.engineTemp = Math.max(0, state.engineTemp - .08);
   }
 
-  // Simulate slight tilt variation (terrain)
   if (t % 60 === 0) {
-    state.pitch += (Math.random() - 0.5) * 0.4;
-    state.roll  += (Math.random() - 0.5) * 0.4;
-    state.pitch  = clamp(state.pitch, -8, 8);
-    state.roll   = clamp(state.roll,  -8, 8);
+    state.pitch = cl(state.pitch + (Math.random()-.5) * .4, -8, 8);
+    state.roll  = cl(state.roll  + (Math.random()-.5) * .4, -8, 8);
   }
 
-  // Update all outputs
-  setDial('rpm-arc',  'rpm-needle',  'rpm-val-text',  state.rpm,  40);
-  setDial('load-arc', 'load-needle', 'load-val-text', state.load, 100);
-  setMiniArc('hyd-arc',      state.hydPres, 350);
-  setMiniArc('hyd-temp-arc', state.hydTemp, 105);
-
-  $('hyd-pres-val').textContent = Math.round(state.hydPres);
-  $('hyd-temp-val').textContent = Math.round(state.hydTemp);
+  // ── Push to UI ──
+  setRing('rpm-ring',  state.rpm,  4000);
+  setRing('load-ring', state.load, 100);
+  $('rpm-val-text').textContent  = Math.round(state.rpm);
+  $('load-val-text').textContent = Math.round(state.load);
 
   updateVitals();
-  updateLevelBubble();
-  updateCenterStats();
+  updateLevel();
+  updateStats();
 
-  // Hydraulic temp warning
-  const hydTempAlert = document.querySelector('[data-code="HYD-TEMP"]');
-  if (hydTempAlert) {
-    hydTempAlert.style.display = state.hydTemp > 82 ? '' : 'none';
-  }
+  // HYD temp warning chip visibility
+  const chip = document.querySelector('[data-code="HYD-TEMP"]');
+  if (chip) chip.style.display = state.hydTemp > 82 ? '' : 'none';
 }
 
-// Initialise gauges at zero
-setDial('rpm-arc',  'rpm-needle',  'rpm-val-text',  0, 40);
-setDial('load-arc', 'load-needle', 'load-val-text', 0, 100);
-setMiniArc('hyd-arc',      0, 350);
-setMiniArc('hyd-temp-arc', 40, 105);
+setInterval(tick, 300);
 
-// Set initial vitals display
-updateVitals();
-updateLevelBubble();
-updateCenterStats();
-
-setInterval(simulationTick, 300);
-
-/* ─── Touch & pointer accessibility ─────────────────────────────── */
-// Prevent accidental double-tap zoom on touch screens
+/* ─── Touch: prevent double-tap zoom ─────────────────────────────── */
 document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
-
-// Visual feedback for all interactive elements on touch
-document.querySelectorAll('button, .hyd-btn, .mode-btn, .travel-btn, .bb-btn').forEach(el => {
-  el.addEventListener('touchstart', () => {}, { passive: true });
-});
