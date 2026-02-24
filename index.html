@@ -406,24 +406,199 @@
 
       <!-- Machine SVG schematic -->
       <div class="machine-schematic">
-        <svg viewBox="0 0 260 160" class="machine-svg">
-          <!-- Undercarriage -->
-          <rect x="22" y="118" width="216" height="20" rx="4" class="mach-body"/>
-          <rect x="16" y="116" width="228" height="11" rx="4" class="mach-track"/>
-          <circle cx="28"  cy="127" r="10" class="mach-wheel"/>
-          <circle cx="232" cy="127" r="10" class="mach-wheel"/>
-          <circle cx="80"  cy="127" r="6"  class="mach-wheel-s"/>
-          <circle cx="120" cy="127" r="6"  class="mach-wheel-s"/>
-          <circle cx="160" cy="127" r="6"  class="mach-wheel-s"/>
-          <!-- Upper house -->
-          <rect x="62" y="88" width="136" height="32" rx="4" class="mach-body"/>
-          <!-- Cab -->
-          <rect x="70" y="78" width="72" height="18" rx="3" class="mach-cab"/>
-          <rect x="78" y="80" width="22" height="14" rx="2" class="mach-glass"/>
-          <!-- Arm linkage (dynamic) -->
-          <line id="svg-boom"   x1="80" y1="96" x2="80" y2="55" class="mach-arm" stroke-width="8"/>
-          <line id="svg-arm"    x1="80" y1="55" x2="114" y2="32" class="mach-arm" stroke-width="6"/>
-          <path id="svg-bucket" d="M114 32 L128 22 L133 36 L118 44Z" class="mach-bucket"/>
+        <svg viewBox="0 0 320 185" class="machine-svg">
+          <defs>
+            <linearGradient id="yg-body" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFE040"/>
+              <stop offset="100%" stop-color="#FFD000"/>
+            </linearGradient>
+            <linearGradient id="yg-shadow" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#F0C000"/>
+              <stop offset="100%" stop-color="#D4A800"/>
+            </linearGradient>
+            <linearGradient id="yg-cab" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFE840"/>
+              <stop offset="100%" stop-color="#FDD000"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Ground shadow -->
+          <ellipse cx="160" cy="180" rx="148" ry="5" fill="#b8b0a0" opacity="0.35"/>
+
+          <!-- ══ TRACK ══ -->
+          <!-- Outer rubber belt -->
+          <rect x="10" y="119" width="300" height="52" rx="26" fill="#1c1c1c" stroke="#0e0e0e" stroke-width="1.5"/>
+          <!-- Top belt run (dark strip) -->
+          <rect x="36" y="121" width="248" height="8" rx="2" fill="#121212" stroke="#252525" stroke-width="0.5"/>
+          <!-- Internal yellow track frame -->
+          <rect x="36" y="129" width="248" height="36" rx="3" fill="url(#yg-shadow)" stroke="#b09200" stroke-width="1"/>
+          <!-- Bottom track shoes strip -->
+          <rect x="36" y="163" width="248" height="7" rx="1" fill="#121212" stroke="#252525" stroke-width="0.5"/>
+          <!-- Track shoe divider marks (every 13 px) -->
+          <line x1="49"  y1="163" x2="49"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="62"  y1="163" x2="62"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="75"  y1="163" x2="75"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="88"  y1="163" x2="88"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="101" y1="163" x2="101" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="114" y1="163" x2="114" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="127" y1="163" x2="127" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="140" y1="163" x2="140" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="153" y1="163" x2="153" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="166" y1="163" x2="166" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="179" y1="163" x2="179" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="192" y1="163" x2="192" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="205" y1="163" x2="205" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="218" y1="163" x2="218" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="231" y1="163" x2="231" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="244" y1="163" x2="244" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="257" y1="163" x2="257" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+          <line x1="270" y1="163" x2="270" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
+
+          <!-- Left IDLER -->
+          <circle cx="36"  cy="145" r="23" fill="#282828" stroke="#404040" stroke-width="1.5"/>
+          <circle cx="36"  cy="145" r="15" fill="#181818" stroke="#4a4a4a" stroke-width="1.2"/>
+          <line x1="36" y1="130" x2="36" y2="128" stroke="#4a4a4a" stroke-width="2.5"/>
+          <line x1="36" y1="160" x2="36" y2="162" stroke="#4a4a4a" stroke-width="2.5"/>
+          <line x1="21" y1="145" x2="19" y2="145" stroke="#4a4a4a" stroke-width="2.5"/>
+          <line x1="51" y1="145" x2="53" y2="145" stroke="#4a4a4a" stroke-width="2.5"/>
+          <circle cx="36"  cy="145" r="5"  fill="#2e2e2e"/>
+
+          <!-- Right DRIVE SPROCKET -->
+          <circle cx="284" cy="145" r="25" fill="#202020" stroke="#404040" stroke-width="1.5"/>
+          <!-- 8 sprocket teeth -->
+          <circle cx="284" cy="120" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="302" cy="127" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="309" cy="145" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="302" cy="163" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="284" cy="170" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="266" cy="163" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="259" cy="145" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="266" cy="127" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
+          <circle cx="284" cy="145" r="15" fill="#181818" stroke="#4a4a4a" stroke-width="1.2"/>
+          <circle cx="284" cy="145" r="5"  fill="#2e2e2e"/>
+
+          <!-- 5 Track rollers -->
+          <circle cx="84"  cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
+          <circle cx="119" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
+          <circle cx="154" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
+          <circle cx="189" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
+          <circle cx="224" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
+          <circle cx="84"  cy="159" r="4"  fill="#181818"/>
+          <circle cx="119" cy="159" r="4"  fill="#181818"/>
+          <circle cx="154" cy="159" r="4"  fill="#181818"/>
+          <circle cx="189" cy="159" r="4"  fill="#181818"/>
+          <circle cx="224" cy="159" r="4"  fill="#181818"/>
+
+          <!-- ══ UNDERCARRIAGE CENTRE BEAM ══ -->
+          <rect x="40" y="111" width="240" height="16" rx="4" fill="url(#yg-shadow)" stroke="#b09200" stroke-width="1.5"/>
+
+          <!-- ══ TURNTABLE / SWING RING ══ -->
+          <ellipse cx="155" cy="111" rx="66" ry="10" fill="#c8a000" stroke="#a88000" stroke-width="1"/>
+          <ellipse cx="155" cy="111" rx="50" ry="6"  fill="#b89200" stroke="#9a7800" stroke-width="0.7"/>
+
+          <!-- ══ UPPER HOUSE BODY ══ -->
+          <path d="M64 111 L64 76 Q66 70 74 68 L228 68 L245 78 L247 111 Z"
+                fill="url(#yg-body)" stroke="#c8a400" stroke-width="1.5"/>
+
+          <!-- ══ REAR COUNTERWEIGHT ══ -->
+          <path d="M212 68 Q224 62 236 66 L245 74 L247 111 L216 111 Z"
+                fill="url(#yg-shadow)" stroke="#a89000" stroke-width="1.2"/>
+          <line x1="222" y1="70" x2="226" y2="109" stroke="#b89800" stroke-width="0.9" opacity="0.7"/>
+          <line x1="232" y1="71" x2="236" y2="109" stroke="#b89800" stroke-width="0.9" opacity="0.7"/>
+
+          <!-- ══ ENGINE HOOD ══ -->
+          <rect x="163" y="70" width="72" height="38" rx="3" fill="#F0BE00" stroke="#c09400" stroke-width="1"/>
+          <!-- Hood louvers -->
+          <line x1="171" y1="74" x2="171" y2="105" stroke="#c8a000" stroke-width="1.1"/>
+          <line x1="179" y1="74" x2="179" y2="105" stroke="#c8a000" stroke-width="1.1"/>
+          <line x1="187" y1="74" x2="187" y2="105" stroke="#c8a000" stroke-width="1.1"/>
+          <line x1="195" y1="74" x2="195" y2="105" stroke="#c8a000" stroke-width="1.1"/>
+          <line x1="203" y1="74" x2="203" y2="105" stroke="#c8a000" stroke-width="1.1"/>
+          <line x1="211" y1="74" x2="211" y2="105" stroke="#c8a000" stroke-width="1.1"/>
+          <!-- Hood horizontal seam -->
+          <line x1="163" y1="89" x2="235" y2="89" stroke="#c09400" stroke-width="0.8" opacity="0.55"/>
+
+          <!-- ══ EXHAUST STACK ══ -->
+          <rect x="220" y="48" width="9" height="24" rx="3" fill="#585858" stroke="#333" stroke-width="1"/>
+          <ellipse cx="224" cy="48" rx="6.5" ry="4" fill="#3c3c3c" stroke="#222" stroke-width="1"/>
+          <!-- Exhaust puff -->
+          <circle cx="224" cy="39" r="5.5" fill="#ccc" opacity="0.12"/>
+          <circle cx="220" cy="31" r="4"   fill="#ccc" opacity="0.08"/>
+
+          <!-- ══ CAB BODY ══ -->
+          <path d="M66 111 L66 60 Q68 54 76 52 L140 52 Q148 50 155 56 L162 70 L162 111 Z"
+                fill="url(#yg-cab)" stroke="#c8a400" stroke-width="1.5"/>
+
+          <!-- ══ CAB ROOF / ROPS ══ -->
+          <rect x="66" y="48" width="98" height="16" rx="4" fill="#F0BE00" stroke="#c09400" stroke-width="1.5"/>
+          <!-- Roof grab handles -->
+          <rect x="70"  y="48" width="8" height="5" rx="1" fill="#b89000" stroke="#9a7800" stroke-width="0.5"/>
+          <rect x="154" y="48" width="6" height="5" rx="1" fill="#b89000" stroke="#9a7800" stroke-width="0.5"/>
+
+          <!-- Safety beacon -->
+          <rect x="153" y="41" width="9" height="9" rx="2" fill="#FF7700" stroke="#cc5500" stroke-width="0.8"/>
+          <ellipse cx="157" cy="41" rx="5.5" ry="3.5" fill="#FFAA00" stroke="#cc6600" stroke-width="0.5"/>
+
+          <!-- ══ FRONT WINDSHIELD ══ -->
+          <path d="M70 63 L70 95 L124 95 L124 63 Z"
+                fill="#A0D4EE" stroke="#1e1e1e" stroke-width="1.5" opacity="0.88"/>
+          <!-- Windshield centre post -->
+          <line x1="97" y1="63" x2="97" y2="95" stroke="#181818" stroke-width="1.3"/>
+          <!-- Wiper -->
+          <line x1="72" y1="94" x2="106" y2="65" stroke="#1e1e1e" stroke-width="0.9" opacity="0.45"/>
+
+          <!-- ══ SIDE WINDOW ══ -->
+          <rect x="126" y="60" width="32" height="30" rx="1"
+                fill="#A0D4EE" stroke="#1e1e1e" stroke-width="1.5" opacity="0.88"/>
+
+          <!-- ══ FRONT WORK LIGHTS ══ -->
+          <rect x="66" y="64" width="7" height="5" rx="1" fill="#FFFDE0" stroke="#c8a800" stroke-width="0.7"/>
+          <rect x="66" y="88" width="7" height="5" rx="1" fill="#FFFDE0" stroke="#c8a800" stroke-width="0.7"/>
+
+          <!-- ══ CAB STEP / LOWER PANEL ══ -->
+          <rect x="66" y="95" width="58" height="9" rx="1" fill="#E8B800" stroke="#c09400" stroke-width="0.8"/>
+          <line x1="78"  y1="95" x2="78"  y2="104" stroke="#c09400" stroke-width="0.7"/>
+          <line x1="90"  y1="95" x2="90"  y2="104" stroke="#c09400" stroke-width="0.7"/>
+          <line x1="102" y1="95" x2="102" y2="104" stroke="#c09400" stroke-width="0.7"/>
+          <line x1="114" y1="95" x2="114" y2="104" stroke="#c09400" stroke-width="0.7"/>
+
+          <!-- ══ BOOM MOUNT GUARD (between cab and engine) ══ -->
+          <path d="M154 70 L172 70 L172 111 L154 111 Z" fill="#E8B400" stroke="#b89000" stroke-width="1"/>
+          <circle cx="160" cy="79"  r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
+          <circle cx="166" cy="79"  r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
+          <circle cx="160" cy="102" r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
+          <circle cx="166" cy="102" r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
+
+          <!-- ══ BOOM PIVOT PIN ══ -->
+          <circle cx="118" cy="100" r="9" fill="#1a1a1a" stroke="#505050" stroke-width="1.5"/>
+          <circle cx="118" cy="100" r="5" fill="#2a2a2a" stroke="#606060" stroke-width="1"/>
+          <circle cx="118" cy="100" r="2" fill="#404040"/>
+
+          <!-- ══ DYNAMIC LINKAGE (drawn on top of body) ══ -->
+          <!-- Boom hydraulic cylinder (silver, behind boom) -->
+          <line id="svg-boom-cyl" x1="124" y1="108" x2="130" y2="68"
+                stroke="#aaaaaa" stroke-width="5" stroke-linecap="round"/>
+          <!-- Boom outline / depth shadow -->
+          <line id="svg-boom-sh" x1="118" y1="100" x2="100" y2="52"
+                stroke="#C8A000" stroke-width="14" stroke-linecap="round" opacity="0.35"/>
+          <!-- Boom main beam (yellow) -->
+          <line id="svg-boom" x1="118" y1="100" x2="100" y2="52"
+                stroke="#FFD200" stroke-width="11" stroke-linecap="round"/>
+          <!-- Arm hydraulic cylinder -->
+          <line id="svg-arm-cyl" x1="100" y1="52" x2="116" y2="28"
+                stroke="#aaaaaa" stroke-width="4" stroke-linecap="round"/>
+          <!-- Arm outline / depth shadow -->
+          <line id="svg-arm-sh" x1="100" y1="52" x2="116" y2="28"
+                stroke="#C8A000" stroke-width="11" stroke-linecap="round" opacity="0.35"/>
+          <!-- Arm main beam (yellow) -->
+          <line id="svg-arm" x1="100" y1="52" x2="116" y2="28"
+                stroke="#FFD200" stroke-width="9" stroke-linecap="round"/>
+          <!-- Bucket -->
+          <path id="svg-bucket" d="M116 28 L130 18 L135 32 L120 40Z"
+                fill="#FFD200" stroke="#C8A000" stroke-width="2" stroke-linejoin="round"/>
+          <!-- Joint pins -->
+          <circle id="svg-joint-ba" cx="100" cy="52" r="5.5" fill="#1a1a1a" stroke="#555" stroke-width="1.2"/>
+          <circle id="svg-joint-ab" cx="116" cy="28" r="4.5" fill="#1a1a1a" stroke="#555" stroke-width="1.2"/>
         </svg>
       </div>
 

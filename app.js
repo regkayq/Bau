@@ -131,28 +131,60 @@ updateSwing();
 
 /* ─── Machine SVG schematic ──────────────────────────────────────── */
 function updateMachineSvg() {
-  const toRad   = a => a * Math.PI / 180;
+  const toRad = a => a * Math.PI / 180;
+
+  // Pivot matches the boom pivot pin circle in the new 320×185 viewBox SVG
+  const bx = 118, by = 100;
+  const boomLen = 75, armLen = 60;
+
   const boomAng = -90 + (state.boom   / 100) * 65;
   const armAng  = boomAng + 35 + (state.arm   / 100) * 45;
-  const bktAng  = armAng  + 20 + (state.bucket/ 100) * 40;
+  const bktAng  = armAng  + 20 + (state.bucket / 100) * 40;
 
-  const boomLen = 52, armLen = 40;
-  const bx = 80, by = 96;
   const bx2 = bx + boomLen * Math.cos(toRad(boomAng));
   const by2 = by + boomLen * Math.sin(toRad(boomAng));
   const ax2 = bx2 + armLen * Math.cos(toRad(armAng));
   const ay2 = by2 + armLen * Math.sin(toRad(armAng));
 
-  const bLen = 16;
-  const b1x = ax2 + bLen * Math.cos(toRad(bktAng - 30));
-  const b1y = ay2 + bLen * Math.sin(toRad(bktAng - 30));
-  const b2x = ax2 + bLen * Math.cos(toRad(bktAng + 30));
-  const b2y = ay2 + bLen * Math.sin(toRad(bktAng + 30));
+  const bkLen = 22;
+  const b1x = ax2 + bkLen * Math.cos(toRad(bktAng - 30));
+  const b1y = ay2 + bkLen * Math.sin(toRad(bktAng - 30));
+  const b2x = ax2 + bkLen * Math.cos(toRad(bktAng + 30));
+  const b2y = ay2 + bkLen * Math.sin(toRad(bktAng + 30));
 
-  const sb = $('svg-boom'), sa = $('svg-arm'), sk = $('svg-bucket');
-  if (sb) { sb.setAttribute('x1',bx); sb.setAttribute('y1',by); sb.setAttribute('x2',bx2); sb.setAttribute('y2',by2); }
-  if (sa) { sa.setAttribute('x1',bx2); sa.setAttribute('y1',by2); sa.setAttribute('x2',ax2); sa.setAttribute('y2',ay2); }
-  if (sk) sk.setAttribute('d', `M${ax2} ${ay2} L${b1x} ${b1y} L${b2x} ${b2y} Z`);
+  const setLine = (id, x1, y1, x2, y2) => {
+    const el = $(id);
+    if (!el) return;
+    el.setAttribute('x1', x1); el.setAttribute('y1', y1);
+    el.setAttribute('x2', x2); el.setAttribute('y2', y2);
+  };
+
+  // Main beams + their depth shadows (same endpoints)
+  setLine('svg-boom',    bx,  by,  bx2, by2);
+  setLine('svg-boom-sh', bx,  by,  bx2, by2);
+  setLine('svg-arm',     bx2, by2, ax2, ay2);
+  setLine('svg-arm-sh',  bx2, by2, ax2, ay2);
+
+  const bkt = $('svg-bucket');
+  if (bkt) bkt.setAttribute('d', `M${ax2} ${ay2} L${b1x} ${b1y} L${b2x} ${b2y} Z`);
+
+  // Boom hydraulic cylinder: from near-pivot base → 58% along boom
+  const bCylX2 = bx + boomLen * 0.58 * Math.cos(toRad(boomAng));
+  const bCylY2 = by + boomLen * 0.58 * Math.sin(toRad(boomAng));
+  setLine('svg-boom-cyl', bx + 8, by + 10, bCylX2, bCylY2);
+
+  // Arm hydraulic cylinder: 12% back from boom-tip → 45% along arm
+  const aCylX1 = bx2 - boomLen * 0.12 * Math.cos(toRad(boomAng));
+  const aCylY1 = by2 - boomLen * 0.12 * Math.sin(toRad(boomAng));
+  const aCylX2 = bx2 + armLen  * 0.45 * Math.cos(toRad(armAng));
+  const aCylY2 = by2 + armLen  * 0.45 * Math.sin(toRad(armAng));
+  setLine('svg-arm-cyl', aCylX1, aCylY1, aCylX2, aCylY2);
+
+  // Reposition joint pins
+  const jba = $('svg-joint-ba');
+  if (jba) { jba.setAttribute('cx', bx2); jba.setAttribute('cy', by2); }
+  const jab = $('svg-joint-ab');
+  if (jab) { jab.setAttribute('cx', ax2); jab.setAttribute('cy', ay2); }
 }
 updateMachineSvg();
 

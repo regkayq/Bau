@@ -759,25 +759,16 @@ body { display: flex; flex-direction: column; }
 }
 
 .machine-schematic {
-  background: #edf3fa;
+  background: #e8eef5;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 4px;
+  padding: 6px 4px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  width: 220px;
+  width: 280px;
 }
 
-.machine-svg { width: 100%; height: auto; }
-
-.mach-body    { fill: #c9d8ec; stroke: #a3bdd6; stroke-width: 1; }
-.mach-track   { fill: none; stroke: #8aafcf; stroke-width: 2; }
-.mach-cab     { fill: #b0cce6; stroke: #8aafcf; stroke-width: 1; }
-.mach-glass   { fill: #d6eaf8; stroke: #8ab4d4; stroke-width: .5; }
-.mach-wheel   { fill: #aabfd4; stroke: #8aafcf; stroke-width: 1.5; }
-.mach-wheel-s { fill: #aabfd4; stroke: #8aafcf; stroke-width: 1; }
-.mach-arm     { stroke: var(--blue); fill: none; stroke-linecap: round; }
-.mach-bucket  { fill: none; stroke: var(--blue); stroke-width: 3; stroke-linejoin: round; }
+.machine-svg { width: 100%; height: auto; display: block; }
 
 .status-strip {
   flex: 1;
