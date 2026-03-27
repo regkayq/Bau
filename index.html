@@ -2,709 +2,379 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>Bau Control System</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Clean Plates — Recipes for Every Day</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600&family=Merriweather:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-<!-- ═══ TOP BAR ══════════════════════════════════════════════════ -->
-<header class="top-bar">
-  <div class="tb-left">
-    <span class="tb-brand">BAU</span>
-    <div class="tb-engine-status" id="tb-engine-status">
-      <svg class="tb-status-icon" viewBox="0 0 24 24" id="tb-status-icon">
-        <circle cx="12" cy="12" r="10"/>
-        <polygon points="10 8 16 12 10 16 10 8"/>
-      </svg>
-      <div class="tb-status-text">
-        <span class="tb-status-main" id="tb-status-main">STOPPED</span>
-        <span class="tb-status-sub" id="tb-status-sub">Engine off · Ready</span>
+  <!-- ═══ NAV ═══ -->
+  <header class="nav" id="nav">
+    <div class="nav-inner">
+      <a href="#" class="logo">Clean Plates</a>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#recipes">Recipes</a>
+        <a href="#fridge">Fridge</a>
+        <a href="#categories">Categories</a>
+      </nav>
+      <a href="#cta" class="btn-teal nav-cta">Start Cooking</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#features">Features</a>
+      <a href="#recipes">Recipes</a>
+      <a href="#fridge">Fridge</a>
+      <a href="#categories">Categories</a>
+      <a href="#cta" class="btn-teal">Start Cooking</a>
+    </div>
+  </header>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-text fade-up">
+      <p class="eyebrow">Your daily cooking companion</p>
+      <h1>Good food,<br/><em>simple plates.</em></h1>
+      <p class="hero-sub">Discover recipes built for real kitchens — quick weeknight dinners, weekend feasts, and everything your fridge already has.</p>
+      <div class="hero-actions">
+        <a href="#recipes" class="btn-teal">Browse Recipes</a>
+        <a href="#features" class="btn-ghost">How it works</a>
       </div>
     </div>
-  </div>
-
-  <div class="tb-center">
-    <div class="tb-meta-cell">
-      <span class="tb-meta-label">Mode</span>
-      <span class="tb-meta-val" id="tb-mode-val">POWER</span>
-    </div>
-    <div class="tb-divider"></div>
-    <div class="tb-meta-cell">
-      <span class="tb-meta-label">Machine</span>
-      <span class="tb-meta-val">BAU-7 · SN-40281</span>
-    </div>
-    <div class="tb-divider"></div>
-    <div class="tb-meta-cell">
-      <span class="tb-meta-label">GPS</span>
-      <span class="tb-meta-val tb-ok" id="tb-gps">ACTIVE</span>
-    </div>
-    <div class="tb-divider"></div>
-    <div class="tb-meta-cell">
-      <span class="tb-meta-label">Op. Hours</span>
-      <span class="tb-meta-val" id="cs-hours">1483.2 h</span>
-    </div>
-  </div>
-
-  <div class="tb-right">
-    <span class="tb-clock" id="clock">--:--</span>
-    <button class="tb-icon-btn" id="btn-alert-bar" title="Alerts">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span class="badge" id="alert-badge">2</span>
-    </button>
-    <button class="tb-icon-btn" id="btn-settings" title="Settings">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
-  </div>
-</header>
-
-<!-- ═══ DASHBOARD ════════════════════════════════════════════════ -->
-<main class="dashboard">
-
-  <!-- ── CARD: HYDRAULICS ──────────────────────────────────────── -->
-  <section class="card card-hydraulics">
-    <div class="card-hd">
-      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 10 10H12V2z"/><path d="M12 2v10H2A10 10 0 0 1 12 2z" opacity=".4"/></svg>
-      Hydraulics
-    </div>
-    <div class="card-bd hyd-bd">
-
-      <!-- 3 ring gauges -->
-      <div class="hyd-rings">
-
-        <div class="hyd-ring-item">
-          <div class="ring-sm-wrap">
-            <svg class="ring-svg" viewBox="0 0 100 100">
-              <circle class="ring-track" cx="50" cy="50" r="38"/>
-              <circle class="ring-fill" cx="50" cy="50" r="38" id="boom-ring"/>
-            </svg>
-            <div class="ring-inner">
-              <span class="ring-val" id="boom-val">50</span>
-              <span class="ring-unit">%</span>
+    <div class="hero-phone fade-up delay-1">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-header">
+            <span class="app-logo">Clean Plates</span>
+            <span class="app-greeting">Good evening 👋</span>
+          </div>
+          <div class="app-rotd">
+            <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80" alt="Recipe of the Day"/>
+            <div class="rotd-label">
+              <span class="badge-teal">Recipe of the day</span>
+              <p>Creamy Tomato Pasta</p>
+              <span class="rotd-meta">20 min · Easy</span>
             </div>
           </div>
-          <div class="hyd-ring-label">BOOM</div>
-          <div class="hyd-ring-btns">
-            <button class="hyd-btn" data-axis="boom" data-dir="-1">
-              <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <button class="hyd-btn" data-axis="boom" data-dir="1">
-              <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="hyd-ring-item">
-          <div class="ring-sm-wrap">
-            <svg class="ring-svg" viewBox="0 0 100 100">
-              <circle class="ring-track" cx="50" cy="50" r="38"/>
-              <circle class="ring-fill" cx="50" cy="50" r="38" id="arm-ring"/>
-            </svg>
-            <div class="ring-inner">
-              <span class="ring-val" id="arm-val">50</span>
-              <span class="ring-unit">%</span>
+          <div class="app-cards-row">
+            <div class="mini-card">
+              <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=200&q=80" alt="Salad"/>
+              <span>Greek Salad</span>
             </div>
-          </div>
-          <div class="hyd-ring-label">ARM</div>
-          <div class="hyd-ring-btns">
-            <button class="hyd-btn" data-axis="arm" data-dir="-1">
-              <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <button class="hyd-btn" data-axis="arm" data-dir="1">
-              <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="hyd-ring-item">
-          <div class="ring-sm-wrap">
-            <svg class="ring-svg" viewBox="0 0 100 100">
-              <circle class="ring-track" cx="50" cy="50" r="38"/>
-              <circle class="ring-fill" cx="50" cy="50" r="38" id="bucket-ring"/>
-            </svg>
-            <div class="ring-inner">
-              <span class="ring-val" id="bucket-val">50</span>
-              <span class="ring-unit">%</span>
+            <div class="mini-card">
+              <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&q=80" alt="Bowl"/>
+              <span>Power Bowl</span>
             </div>
-          </div>
-          <div class="hyd-ring-label">BUCKET</div>
-          <div class="hyd-ring-btns">
-            <button class="hyd-btn" data-axis="bucket" data-dir="-1">
-              <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <button class="hyd-btn" data-axis="bucket" data-dir="1">
-              <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-            </button>
-          </div>
-        </div>
-
-      </div><!-- /hyd-rings -->
-
-      <!-- Swing row -->
-      <div class="hyd-divider"></div>
-      <div class="swing-row">
-        <div class="swing-row-label">SWING</div>
-        <div class="swing-controls">
-          <button class="swing-btn" id="swing-left">
-            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
-          <div class="swing-arc-wrap">
-            <svg viewBox="0 0 90 52" class="swing-svg">
-              <path class="swing-track" d="M8 48 A40 40 0 0 1 82 48"/>
-              <path class="swing-fill" d="M8 48 A40 40 0 0 1 82 48" id="swing-arc-fill"/>
-              <line class="swing-needle" id="swing-needle" x1="45" y1="48" x2="45" y2="12"/>
-              <circle cx="45" cy="48" r="4" class="swing-pivot"/>
-            </svg>
-            <div class="swing-value" id="swing-deg">0°</div>
-          </div>
-          <button class="swing-btn" id="swing-right">
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- HYD stats row -->
-      <div class="hyd-divider"></div>
-      <div class="hyd-stats-row">
-        <div class="hyd-stat">
-          <span class="hs-label">Pressure</span>
-          <span class="hs-val" id="hyd-pres-val">0</span>
-          <span class="hs-unit">bar</span>
-          <div class="hs-bar-wrap"><div class="hs-bar" id="hyd-pres-bar"></div></div>
-        </div>
-        <div class="hyd-stat-sep"></div>
-        <div class="hyd-stat">
-          <span class="hs-label">Hyd. Temp</span>
-          <span class="hs-val" id="hyd-temp-val">40</span>
-          <span class="hs-unit">°C</span>
-          <div class="hs-bar-wrap"><div class="hs-bar warn-bar" id="hyd-temp-bar"></div></div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ── CARD: ENGINE ──────────────────────────────────────────── -->
-  <section class="card card-engine">
-    <div class="card-hd">
-      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
-      Engine
-    </div>
-    <div class="card-bd engine-bd">
-
-      <!-- RPM large ring -->
-      <div class="engine-main">
-        <div class="ring-lg-wrap">
-          <svg class="ring-svg ring-svg-lg" viewBox="0 0 160 160">
-            <circle class="ring-track" cx="80" cy="80" r="66"/>
-            <circle class="ring-fill ring-fill-lg" cx="80" cy="80" r="66" id="rpm-ring"/>
-          </svg>
-          <div class="ring-inner ring-inner-lg">
-            <span class="ring-val-lg" id="rpm-val-text">0</span>
-            <span class="ring-unit-lg">RPM</span>
-          </div>
-        </div>
-        <div class="ring-caption">Engine Speed</div>
-      </div>
-
-      <!-- Load + temp side -->
-      <div class="engine-side">
-
-        <div class="ring-md-wrap">
-          <svg class="ring-svg ring-svg-md" viewBox="0 0 120 120">
-            <circle class="ring-track" cx="60" cy="60" r="50"/>
-            <circle class="ring-fill ring-fill-load" cx="60" cy="60" r="50" id="load-ring"/>
-          </svg>
-          <div class="ring-inner">
-            <span class="ring-val-md" id="load-val-text">0</span>
-            <span class="ring-unit">%</span>
-          </div>
-        </div>
-        <div class="ring-caption">Load</div>
-
-        <div class="temp-block">
-          <div class="temp-header">
-            <svg viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>
-            Coolant
-          </div>
-          <div class="temp-value-row">
-            <span class="temp-big" id="eng-temp-val">--</span>
-            <span class="temp-deg">°C</span>
-          </div>
-          <div class="temp-track-wrap">
-            <div class="temp-track">
-              <div class="temp-fill" id="eng-temp-bar"></div>
-            </div>
-            <div class="temp-range">
-              <span>0</span><span>110</span>
+            <div class="mini-card">
+              <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&q=80" alt="Pancakes"/>
+              <span>Pancakes</span>
             </div>
           </div>
         </div>
-
-      </div><!-- /engine-side -->
-
-    </div><!-- /engine-bd -->
-  </section>
-
-  <!-- ── CARD: VITALS ──────────────────────────────────────────── -->
-  <section class="card card-vitals">
-    <div class="card-hd">
-      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      Vitals
-    </div>
-    <div class="card-bd vitals-bd">
-
-      <div class="vbar-item">
-        <div class="vbar-track-wrap">
-          <div class="vbar-track">
-            <div class="vbar-fill" id="fuel-bar"></div>
-          </div>
-          <div class="vbar-ticks">
-            <span></span><span>50</span><span></span>
-          </div>
-        </div>
-        <div class="vbar-num" id="fuel-pct">--</div>
-        <div class="vbar-label">
-          <svg viewBox="0 0 24 24"><path d="M3 22V8l9-6 9 6v14"/></svg>
-          Fuel %
+      </div>
+      <div class="float-card float-1 fade-up delay-2">
+        <span class="float-icon">🕐</span>
+        <div>
+          <strong>20 min avg</strong>
+          <small>Quick weeknight meals</small>
         </div>
       </div>
-
-      <div class="vbar-sep"></div>
-
-      <div class="vbar-item">
-        <div class="vbar-track-wrap">
-          <div class="vbar-track">
-            <div class="vbar-fill" id="def-bar"></div>
-          </div>
-          <div class="vbar-ticks"><span></span><span>50</span><span></span></div>
-        </div>
-        <div class="vbar-num" id="def-pct">--</div>
-        <div class="vbar-label">
-          <svg viewBox="0 0 24 24"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
-          DEF %
+      <div class="float-card float-2 fade-up delay-3">
+        <span class="float-icon">🥗</span>
+        <div>
+          <strong>500+ recipes</strong>
+          <small>Always something new</small>
         </div>
       </div>
-
-      <div class="vbar-sep"></div>
-
-      <div class="vbar-item">
-        <div class="vbar-track-wrap">
-          <div class="vbar-track">
-            <div class="vbar-fill bat-fill" id="bat-bar"></div>
-          </div>
-          <div class="vbar-ticks"><span></span><span>50</span><span></span></div>
-        </div>
-        <div class="vbar-num" id="bat-val">--</div>
-        <div class="vbar-label">
-          <svg viewBox="0 0 24 24"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>
-          Bat V
-        </div>
-      </div>
-
     </div>
   </section>
 
-  <!-- ── CARD: DRIVE & MODE ────────────────────────────────────── -->
-  <section class="card card-drive">
-    <div class="card-hd">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Drive &amp; Mode
+  <!-- ═══ STATS BAR ═══ -->
+  <div class="stats-bar">
+    <div class="stat">
+      <strong>500+</strong>
+      <span>Curated recipes</span>
     </div>
-    <div class="card-bd drive-bd">
-
-      <!-- Ignition -->
-      <div class="ign-block">
-        <div class="ign-ring-wrap">
-          <svg class="ring-svg ring-svg-md" viewBox="0 0 120 120">
-            <circle class="ring-track" cx="60" cy="60" r="50"/>
-            <circle class="ring-fill ring-fill-throttle" cx="60" cy="60" r="50" id="throttle-ring"/>
-          </svg>
-          <div class="ring-inner">
-            <span class="ring-val-md" id="throttle-val-ring">0</span>
-            <span class="ring-unit">%</span>
-          </div>
-        </div>
-        <div class="ring-caption">Throttle</div>
-        <div class="thr-btn-row">
-          <button class="thr-btn" id="thr-dn">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <span class="thr-label" id="throttle-val">0%</span>
-          <button class="thr-btn" id="thr-up">
-            <svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <div class="drive-divider"></div>
-
-      <!-- Ignition button -->
-      <div class="ignition-block">
-        <div class="ign-state-display">
-          <div class="ign-state-dot" id="ign-dot"></div>
-          <span class="ign-state-text" id="ign-state">OFF</span>
-        </div>
-        <button class="ign-btn" id="btn-ignition">
-          <svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
-          START / STOP
-        </button>
-      </div>
-
-      <div class="drive-divider"></div>
-
-      <!-- Work mode -->
-      <div class="block-label">Work Mode</div>
-      <div class="mode-btns">
-        <button class="mode-btn active" data-mode="POWER"    data-color="power">PWR</button>
-        <button class="mode-btn"        data-mode="STANDARD" data-color="standard">STD</button>
-        <button class="mode-btn"        data-mode="ECO"      data-color="eco">ECO</button>
-        <button class="mode-btn"        data-mode="FINE"     data-color="fine">FINE</button>
-      </div>
-
-      <div class="drive-divider"></div>
-
-      <!-- Travel speed -->
-      <div class="block-label">Travel Speed</div>
-      <div class="travel-btns">
-        <button class="travel-btn active" data-speed="1">LOW</button>
-        <button class="travel-btn"        data-speed="2">MED</button>
-        <button class="travel-btn"        data-speed="3">HIGH</button>
-      </div>
-
-      <div class="drive-divider"></div>
-
-      <!-- Machine level -->
-      <div class="block-label">Level</div>
-      <div class="level-row">
-        <div class="level-bubble-wrap">
-          <div class="level-line-h"></div>
-          <div class="level-line-v"></div>
-          <div class="level-bubble" id="level-bubble"></div>
-        </div>
-        <div class="tilt-vals">
-          <div class="tilt-val-row">
-            <span class="tilt-key">Pitch</span>
-            <span class="tilt-num" id="tilt-pitch">0.0°</span>
-          </div>
-          <div class="tilt-val-row">
-            <span class="tilt-key">Roll</span>
-            <span class="tilt-num" id="tilt-roll">0.0°</span>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /drive-bd -->
-  </section>
-
-  <!-- ── CARD: ALERTS + MACHINE SCHEMATIC ─────────────────────── -->
-  <section class="card card-bottom">
-    <div class="card-hd">
-      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      Alerts &amp; Status
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <strong>20 min</strong>
+      <span>Average cook time</span>
     </div>
-    <div class="card-bd bottom-bd">
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <strong>3</strong>
+      <span>Meal categories</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <strong>100%</strong>
+      <span>Free, always</span>
+    </div>
+  </div>
 
-      <!-- Machine SVG schematic -->
-      <div class="machine-schematic">
-        <svg viewBox="0 0 320 185" class="machine-svg">
-          <defs>
-            <linearGradient id="yg-body" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFE040"/>
-              <stop offset="100%" stop-color="#FFD000"/>
-            </linearGradient>
-            <linearGradient id="yg-shadow" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#F0C000"/>
-              <stop offset="100%" stop-color="#D4A800"/>
-            </linearGradient>
-            <linearGradient id="yg-cab" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFE840"/>
-              <stop offset="100%" stop-color="#FDD000"/>
-            </linearGradient>
-          </defs>
-
-          <!-- Ground shadow -->
-          <ellipse cx="160" cy="180" rx="148" ry="5" fill="#b8b0a0" opacity="0.35"/>
-
-          <!-- ══ TRACK ══ -->
-          <!-- Outer rubber belt -->
-          <rect x="10" y="119" width="300" height="52" rx="26" fill="#1c1c1c" stroke="#0e0e0e" stroke-width="1.5"/>
-          <!-- Top belt run (dark strip) -->
-          <rect x="36" y="121" width="248" height="8" rx="2" fill="#121212" stroke="#252525" stroke-width="0.5"/>
-          <!-- Internal yellow track frame -->
-          <rect x="36" y="129" width="248" height="36" rx="3" fill="url(#yg-shadow)" stroke="#b09200" stroke-width="1"/>
-          <!-- Bottom track shoes strip -->
-          <rect x="36" y="163" width="248" height="7" rx="1" fill="#121212" stroke="#252525" stroke-width="0.5"/>
-          <!-- Track shoe divider marks (every 13 px) -->
-          <line x1="49"  y1="163" x2="49"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="62"  y1="163" x2="62"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="75"  y1="163" x2="75"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="88"  y1="163" x2="88"  y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="101" y1="163" x2="101" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="114" y1="163" x2="114" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="127" y1="163" x2="127" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="140" y1="163" x2="140" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="153" y1="163" x2="153" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="166" y1="163" x2="166" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="179" y1="163" x2="179" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="192" y1="163" x2="192" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="205" y1="163" x2="205" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="218" y1="163" x2="218" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="231" y1="163" x2="231" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="244" y1="163" x2="244" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="257" y1="163" x2="257" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-          <line x1="270" y1="163" x2="270" y2="170" stroke="#2e2e2e" stroke-width="0.9"/>
-
-          <!-- Left IDLER -->
-          <circle cx="36"  cy="145" r="23" fill="#282828" stroke="#404040" stroke-width="1.5"/>
-          <circle cx="36"  cy="145" r="15" fill="#181818" stroke="#4a4a4a" stroke-width="1.2"/>
-          <line x1="36" y1="130" x2="36" y2="128" stroke="#4a4a4a" stroke-width="2.5"/>
-          <line x1="36" y1="160" x2="36" y2="162" stroke="#4a4a4a" stroke-width="2.5"/>
-          <line x1="21" y1="145" x2="19" y2="145" stroke="#4a4a4a" stroke-width="2.5"/>
-          <line x1="51" y1="145" x2="53" y2="145" stroke="#4a4a4a" stroke-width="2.5"/>
-          <circle cx="36"  cy="145" r="5"  fill="#2e2e2e"/>
-
-          <!-- Right DRIVE SPROCKET -->
-          <circle cx="284" cy="145" r="25" fill="#202020" stroke="#404040" stroke-width="1.5"/>
-          <!-- 8 sprocket teeth -->
-          <circle cx="284" cy="120" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="302" cy="127" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="309" cy="145" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="302" cy="163" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="284" cy="170" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="266" cy="163" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="259" cy="145" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="266" cy="127" r="4"  fill="#2e2e2e" stroke="#3e3e3e" stroke-width="0.8"/>
-          <circle cx="284" cy="145" r="15" fill="#181818" stroke="#4a4a4a" stroke-width="1.2"/>
-          <circle cx="284" cy="145" r="5"  fill="#2e2e2e"/>
-
-          <!-- 5 Track rollers -->
-          <circle cx="84"  cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
-          <circle cx="119" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
-          <circle cx="154" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
-          <circle cx="189" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
-          <circle cx="224" cy="159" r="10" fill="#2a2a2a" stroke="#484848" stroke-width="1"/>
-          <circle cx="84"  cy="159" r="4"  fill="#181818"/>
-          <circle cx="119" cy="159" r="4"  fill="#181818"/>
-          <circle cx="154" cy="159" r="4"  fill="#181818"/>
-          <circle cx="189" cy="159" r="4"  fill="#181818"/>
-          <circle cx="224" cy="159" r="4"  fill="#181818"/>
-
-          <!-- ══ UNDERCARRIAGE CENTRE BEAM ══ -->
-          <rect x="40" y="111" width="240" height="16" rx="4" fill="url(#yg-shadow)" stroke="#b09200" stroke-width="1.5"/>
-
-          <!-- ══ TURNTABLE / SWING RING ══ -->
-          <ellipse cx="155" cy="111" rx="66" ry="10" fill="#c8a000" stroke="#a88000" stroke-width="1"/>
-          <ellipse cx="155" cy="111" rx="50" ry="6"  fill="#b89200" stroke="#9a7800" stroke-width="0.7"/>
-
-          <!-- ══ UPPER HOUSE BODY ══ -->
-          <path d="M64 111 L64 76 Q66 70 74 68 L228 68 L245 78 L247 111 Z"
-                fill="url(#yg-body)" stroke="#c8a400" stroke-width="1.5"/>
-
-          <!-- ══ REAR COUNTERWEIGHT ══ -->
-          <path d="M212 68 Q224 62 236 66 L245 74 L247 111 L216 111 Z"
-                fill="url(#yg-shadow)" stroke="#a89000" stroke-width="1.2"/>
-          <line x1="222" y1="70" x2="226" y2="109" stroke="#b89800" stroke-width="0.9" opacity="0.7"/>
-          <line x1="232" y1="71" x2="236" y2="109" stroke="#b89800" stroke-width="0.9" opacity="0.7"/>
-
-          <!-- ══ ENGINE HOOD ══ -->
-          <rect x="163" y="70" width="72" height="38" rx="3" fill="#F0BE00" stroke="#c09400" stroke-width="1"/>
-          <!-- Hood louvers -->
-          <line x1="171" y1="74" x2="171" y2="105" stroke="#c8a000" stroke-width="1.1"/>
-          <line x1="179" y1="74" x2="179" y2="105" stroke="#c8a000" stroke-width="1.1"/>
-          <line x1="187" y1="74" x2="187" y2="105" stroke="#c8a000" stroke-width="1.1"/>
-          <line x1="195" y1="74" x2="195" y2="105" stroke="#c8a000" stroke-width="1.1"/>
-          <line x1="203" y1="74" x2="203" y2="105" stroke="#c8a000" stroke-width="1.1"/>
-          <line x1="211" y1="74" x2="211" y2="105" stroke="#c8a000" stroke-width="1.1"/>
-          <!-- Hood horizontal seam -->
-          <line x1="163" y1="89" x2="235" y2="89" stroke="#c09400" stroke-width="0.8" opacity="0.55"/>
-
-          <!-- ══ EXHAUST STACK ══ -->
-          <rect x="220" y="48" width="9" height="24" rx="3" fill="#585858" stroke="#333" stroke-width="1"/>
-          <ellipse cx="224" cy="48" rx="6.5" ry="4" fill="#3c3c3c" stroke="#222" stroke-width="1"/>
-          <!-- Exhaust puff -->
-          <circle cx="224" cy="39" r="5.5" fill="#ccc" opacity="0.12"/>
-          <circle cx="220" cy="31" r="4"   fill="#ccc" opacity="0.08"/>
-
-          <!-- ══ CAB BODY ══ -->
-          <path d="M66 111 L66 60 Q68 54 76 52 L140 52 Q148 50 155 56 L162 70 L162 111 Z"
-                fill="url(#yg-cab)" stroke="#c8a400" stroke-width="1.5"/>
-
-          <!-- ══ CAB ROOF / ROPS ══ -->
-          <rect x="66" y="48" width="98" height="16" rx="4" fill="#F0BE00" stroke="#c09400" stroke-width="1.5"/>
-          <!-- Roof grab handles -->
-          <rect x="70"  y="48" width="8" height="5" rx="1" fill="#b89000" stroke="#9a7800" stroke-width="0.5"/>
-          <rect x="154" y="48" width="6" height="5" rx="1" fill="#b89000" stroke="#9a7800" stroke-width="0.5"/>
-
-          <!-- Safety beacon -->
-          <rect x="153" y="41" width="9" height="9" rx="2" fill="#FF7700" stroke="#cc5500" stroke-width="0.8"/>
-          <ellipse cx="157" cy="41" rx="5.5" ry="3.5" fill="#FFAA00" stroke="#cc6600" stroke-width="0.5"/>
-
-          <!-- ══ FRONT WINDSHIELD ══ -->
-          <path d="M70 63 L70 95 L124 95 L124 63 Z"
-                fill="#A0D4EE" stroke="#1e1e1e" stroke-width="1.5" opacity="0.88"/>
-          <!-- Windshield centre post -->
-          <line x1="97" y1="63" x2="97" y2="95" stroke="#181818" stroke-width="1.3"/>
-          <!-- Wiper -->
-          <line x1="72" y1="94" x2="106" y2="65" stroke="#1e1e1e" stroke-width="0.9" opacity="0.45"/>
-
-          <!-- ══ SIDE WINDOW ══ -->
-          <rect x="126" y="60" width="32" height="30" rx="1"
-                fill="#A0D4EE" stroke="#1e1e1e" stroke-width="1.5" opacity="0.88"/>
-
-          <!-- ══ FRONT WORK LIGHTS ══ -->
-          <rect x="66" y="64" width="7" height="5" rx="1" fill="#FFFDE0" stroke="#c8a800" stroke-width="0.7"/>
-          <rect x="66" y="88" width="7" height="5" rx="1" fill="#FFFDE0" stroke="#c8a800" stroke-width="0.7"/>
-
-          <!-- ══ CAB STEP / LOWER PANEL ══ -->
-          <rect x="66" y="95" width="58" height="9" rx="1" fill="#E8B800" stroke="#c09400" stroke-width="0.8"/>
-          <line x1="78"  y1="95" x2="78"  y2="104" stroke="#c09400" stroke-width="0.7"/>
-          <line x1="90"  y1="95" x2="90"  y2="104" stroke="#c09400" stroke-width="0.7"/>
-          <line x1="102" y1="95" x2="102" y2="104" stroke="#c09400" stroke-width="0.7"/>
-          <line x1="114" y1="95" x2="114" y2="104" stroke="#c09400" stroke-width="0.7"/>
-
-          <!-- ══ BOOM MOUNT GUARD (between cab and engine) ══ -->
-          <path d="M154 70 L172 70 L172 111 L154 111 Z" fill="#E8B400" stroke="#b89000" stroke-width="1"/>
-          <circle cx="160" cy="79"  r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
-          <circle cx="166" cy="79"  r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
-          <circle cx="160" cy="102" r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
-          <circle cx="166" cy="102" r="2.5" fill="#c09000" stroke="#9a7800" stroke-width="0.5"/>
-
-          <!-- ══ BOOM PIVOT PIN ══ -->
-          <circle cx="118" cy="100" r="9" fill="#1a1a1a" stroke="#505050" stroke-width="1.5"/>
-          <circle cx="118" cy="100" r="5" fill="#2a2a2a" stroke="#606060" stroke-width="1"/>
-          <circle cx="118" cy="100" r="2" fill="#404040"/>
-
-          <!-- ══ DYNAMIC LINKAGE (drawn on top of body) ══ -->
-          <!-- Boom hydraulic cylinder (silver, behind boom) -->
-          <line id="svg-boom-cyl" x1="124" y1="108" x2="130" y2="68"
-                stroke="#aaaaaa" stroke-width="5" stroke-linecap="round"/>
-          <!-- Boom outline / depth shadow -->
-          <line id="svg-boom-sh" x1="118" y1="100" x2="100" y2="52"
-                stroke="#C8A000" stroke-width="14" stroke-linecap="round" opacity="0.35"/>
-          <!-- Boom main beam (yellow) -->
-          <line id="svg-boom" x1="118" y1="100" x2="100" y2="52"
-                stroke="#FFD200" stroke-width="11" stroke-linecap="round"/>
-          <!-- Arm hydraulic cylinder -->
-          <line id="svg-arm-cyl" x1="100" y1="52" x2="116" y2="28"
-                stroke="#aaaaaa" stroke-width="4" stroke-linecap="round"/>
-          <!-- Arm outline / depth shadow -->
-          <line id="svg-arm-sh" x1="100" y1="52" x2="116" y2="28"
-                stroke="#C8A000" stroke-width="11" stroke-linecap="round" opacity="0.35"/>
-          <!-- Arm main beam (yellow) -->
-          <line id="svg-arm" x1="100" y1="52" x2="116" y2="28"
-                stroke="#FFD200" stroke-width="9" stroke-linecap="round"/>
-          <!-- Bucket -->
-          <path id="svg-bucket" d="M116 28 L130 18 L135 32 L120 40Z"
-                fill="#FFD200" stroke="#C8A000" stroke-width="2" stroke-linejoin="round"/>
-          <!-- Joint pins -->
-          <circle id="svg-joint-ba" cx="100" cy="52" r="5.5" fill="#1a1a1a" stroke="#555" stroke-width="1.2"/>
-          <circle id="svg-joint-ab" cx="116" cy="28" r="4.5" fill="#1a1a1a" stroke="#555" stroke-width="1.2"/>
-        </svg>
+  <!-- ═══ FEATURES ═══ -->
+  <section class="features section" id="features">
+    <div class="section-header fade-up">
+      <p class="eyebrow">Why Clean Plates</p>
+      <h2>Everything you need,<br/><em>nothing you don't.</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🌅</div>
+        <h3>Recipe of the Day</h3>
+        <p>A fresh pick every morning — balanced, delicious, and ready in under 30 minutes.</p>
       </div>
-
-      <!-- Status strip -->
-      <div class="status-strip">
-        <div class="ss-item">
-          <span class="ss-key">Load Factor</span>
-          <span class="ss-val" id="cs-load">0%</span>
-        </div>
-        <div class="ss-sep"></div>
-        <div class="ss-item">
-          <span class="ss-key">Next Service</span>
-          <span class="ss-val" id="cs-service">--</span>
-        </div>
-        <div class="ss-sep"></div>
-        <!-- Active alerts inline -->
-        <div class="alert-chips" id="alert-ribbon">
-          <div class="alert-chip warn" data-code="HYD-TEMP">
-            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-            HYD TEMP HIGH
-          </div>
-          <div class="alert-chip info" data-code="SVC-DUE">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            SERVICE DUE IN 48h
-          </div>
-        </div>
+      <div class="feature-card fade-up delay-1">
+        <div class="feature-icon">⚡</div>
+        <h3>Done in 20 Minutes</h3>
+        <p>Every recipe is engineered for real life. Fast prep, minimal cleanup, maximum flavour.</p>
       </div>
-
+      <div class="feature-card fade-up delay-2">
+        <div class="feature-icon">🧊</div>
+        <h3>Fridge-to-Table</h3>
+        <p>Tell us what's in your fridge and we'll find recipes you can make right now.</p>
+      </div>
+      <div class="feature-card fade-up delay-3">
+        <div class="feature-icon">🥦</div>
+        <h3>Nutrition Aware</h3>
+        <p>Clear macros and calorie counts — so you always know what's going on the plate.</p>
+      </div>
     </div>
   </section>
 
-</main>
-
-<!-- ═══ ACTION BAR ══════════════════════════════════════════════ -->
-<footer class="action-bar">
-
-  <div class="ab-group">
-    <span class="ab-group-label">Lights</span>
-    <button class="ab-btn" id="btn-lights-work">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-      Work
-    </button>
-    <button class="ab-btn" id="btn-lights-travel">
-      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-      Travel
-    </button>
-    <button class="ab-btn" id="btn-lights-cabin">
-      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-      Cabin
-    </button>
-  </div>
-
-  <div class="ab-divider"></div>
-
-  <div class="ab-group">
-    <span class="ab-group-label">Attachment</span>
-    <button class="ab-btn ab-att on" id="btn-attach-1">Bucket</button>
-    <button class="ab-btn ab-att"    id="btn-attach-2">Hammer</button>
-    <button class="ab-btn ab-att"    id="btn-attach-3">Clamshell</button>
-  </div>
-
-  <div class="ab-divider"></div>
-
-  <div class="ab-group ab-group-actions">
-    <button class="ab-btn ab-horn" id="btn-horn">
-      <svg viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-      Horn
-    </button>
-    <button class="ab-btn ab-lock" id="btn-safety-lock">
-      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span id="lock-label">LOCKED</span>
-    </button>
-    <button class="ab-btn ab-estop" id="btn-emer-stop">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><rect x="9" y="9" width="6" height="6"/></svg>
-      E-STOP
-    </button>
-  </div>
-
-</footer>
-
-<!-- ═══ OVERLAY: ALERTS ══════════════════════════════════════════ -->
-<div class="overlay" id="overlay-alerts" hidden>
-  <div class="overlay-card">
-    <div class="overlay-hd">
-      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
-      Active Alerts
+  <!-- ═══ RECIPE GRID ═══ -->
+  <section class="recipes section" id="recipes">
+    <div class="section-header fade-up">
+      <p class="eyebrow">Popular this week</p>
+      <h2>Recipes you'll <em>love</em></h2>
     </div>
-    <ul class="alert-list" id="alert-list">
-      <li class="al-item warn"><span class="al-code">HYD-TEMP</span><span class="al-msg">Hydraulic oil temperature above 85 °C — reduce load or pause operation.</span></li>
-      <li class="al-item info"><span class="al-code">SVC-DUE</span><span class="al-msg">Next service interval in approximately 48 operating hours.</span></li>
-    </ul>
-    <button class="overlay-close" id="close-alerts">Close</button>
-  </div>
-</div>
+    <div class="filter-row fade-up">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="breakfast">Breakfast</button>
+      <button class="filter-btn" data-filter="lunch">Lunch</button>
+      <button class="filter-btn" data-filter="dinner">Dinner</button>
+    </div>
+    <div class="recipe-grid">
+      <article class="recipe-card fade-up" data-cat="dinner">
+        <div class="recipe-img-wrap">
+          <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80" alt="Pasta"/>
+          <span class="time-badge">20 min</span>
+        </div>
+        <div class="recipe-body">
+          <span class="difficulty easy">Easy</span>
+          <h4>Creamy Tomato Pasta</h4>
+          <p>Rich, silky tomato sauce with garlic and fresh basil. The only pasta you'll need.</p>
+        </div>
+      </article>
+      <article class="recipe-card fade-up delay-1" data-cat="breakfast">
+        <div class="recipe-img-wrap">
+          <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80" alt="Pancakes"/>
+          <span class="time-badge">15 min</span>
+        </div>
+        <div class="recipe-body">
+          <span class="difficulty easy">Easy</span>
+          <h4>Fluffy Buttermilk Pancakes</h4>
+          <p>Weekend-worthy stacks with golden edges and a cloud-soft centre.</p>
+        </div>
+      </article>
+      <article class="recipe-card fade-up delay-2" data-cat="lunch">
+        <div class="recipe-img-wrap">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=80" alt="Power Bowl"/>
+          <span class="time-badge">10 min</span>
+        </div>
+        <div class="recipe-body">
+          <span class="difficulty easy">Easy</span>
+          <h4>Rainbow Power Bowl</h4>
+          <p>Quinoa, roasted veg, avocado, and tahini dressing. Fuel for the afternoon.</p>
+        </div>
+      </article>
+      <article class="recipe-card fade-up" data-cat="dinner">
+        <div class="recipe-img-wrap">
+          <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=600&q=80" alt="Stir Fry"/>
+          <span class="time-badge">18 min</span>
+        </div>
+        <div class="recipe-body">
+          <span class="difficulty medium">Medium</span>
+          <h4>Sesame Ginger Stir Fry</h4>
+          <p>Crisp vegetables in a sweet-savoury sauce over steamed jasmine rice.</p>
+        </div>
+      </article>
+      <article class="recipe-card fade-up delay-1" data-cat="lunch">
+        <div class="recipe-img-wrap">
+          <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&q=80" alt="Salad"/>
+          <span class="time-badge">12 min</span>
+        </div>
+        <div class="recipe-body">
+          <span class="difficulty easy">Easy</span>
+          <h4>Classic Greek Salad</h4>
+          <p>Tomato, cucumber, olives, and feta with a bright oregano dressing.</p>
+        </div>
+      </article>
+      <article class="recipe-card fade-up delay-2" data-cat="breakfast">
+        <div class="recipe-img-wrap">
+          <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80" alt="Toast"/>
+          <span class="time-badge">8 min</span>
+        </div>
+        <div class="recipe-body">
+          <span class="difficulty easy">Easy</span>
+          <h4>Avocado Toast Supreme</h4>
+          <p>Sourdough, whipped ricotta, sliced avocado, chilli flakes, and a fried egg.</p>
+        </div>
+      </article>
+    </div>
+  </section>
 
-<!-- ═══ OVERLAY: E-STOP ══════════════════════════════════════════ -->
-<div class="overlay overlay-estop" id="overlay-estop" hidden>
-  <div class="estop-card">
-    <svg class="estop-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><rect x="9" y="9" width="6" height="6"/></svg>
-    <div class="estop-title">EMERGENCY STOP</div>
-    <div class="estop-sub">All hydraulic functions suspended</div>
-    <button class="estop-reset" id="btn-estop-reset">RESET &amp; RESUME</button>
-  </div>
-</div>
+  <!-- ═══ FRIDGE SECTION ═══ -->
+  <section class="fridge section" id="fridge">
+    <div class="fridge-inner">
+      <div class="fridge-text fade-up">
+        <p class="eyebrow">Fridge-to-Table</p>
+        <h2>What's in<br/><em>your fridge?</em></h2>
+        <p>Pick the ingredients you have and we'll find recipes that work. No shopping needed.</p>
+        <button class="btn-teal" id="generate-btn">Generate Recipes</button>
+      </div>
+      <div class="fridge-chips fade-up delay-1">
+        <div class="chips-label">Select ingredients</div>
+        <div class="chips-grid">
+          <button class="chip selected" data-ing="eggs">🥚 Eggs</button>
+          <button class="chip" data-ing="chicken">🍗 Chicken</button>
+          <button class="chip selected" data-ing="tomatoes">🍅 Tomatoes</button>
+          <button class="chip" data-ing="pasta">🍝 Pasta</button>
+          <button class="chip selected" data-ing="spinach">🥬 Spinach</button>
+          <button class="chip" data-ing="cheese">🧀 Cheese</button>
+          <button class="chip" data-ing="garlic">🧄 Garlic</button>
+          <button class="chip selected" data-ing="onion">🧅 Onion</button>
+          <button class="chip" data-ing="lemon">🍋 Lemon</button>
+          <button class="chip" data-ing="rice">🍚 Rice</button>
+          <button class="chip" data-ing="avocado">🥑 Avocado</button>
+          <button class="chip" data-ing="mushrooms">🍄 Mushrooms</button>
+        </div>
+        <div class="fridge-result" id="fridge-result"></div>
+      </div>
+    </div>
+  </section>
 
-<script src="app.js"></script>
+  <!-- ═══ CATEGORIES ═══ -->
+  <section class="categories section" id="categories">
+    <div class="section-header fade-up">
+      <p class="eyebrow">Browse by meal</p>
+      <h2>Find your <em>moment</em></h2>
+    </div>
+    <div class="cat-list">
+      <div class="cat-row fade-up">
+        <div class="cat-photo">
+          <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&q=80" alt="Breakfast"/>
+        </div>
+        <div class="cat-info">
+          <h3>Breakfast</h3>
+          <p>Start the day right. Smoothies, eggs, toast, granola — quick and nourishing mornings.</p>
+          <a href="#recipes" class="btn-ghost-teal">Explore Breakfast →</a>
+        </div>
+      </div>
+      <div class="cat-row fade-up delay-1">
+        <div class="cat-info">
+          <h3>Lunch</h3>
+          <p>Light, fresh, and satisfying. Salads, bowls, wraps, and soups ready in minutes.</p>
+          <a href="#recipes" class="btn-ghost-teal">Explore Lunch →</a>
+        </div>
+        <div class="cat-photo">
+          <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80" alt="Lunch"/>
+        </div>
+      </div>
+      <div class="cat-row fade-up delay-2">
+        <div class="cat-photo">
+          <img src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=400&q=80" alt="Dinner"/>
+        </div>
+        <div class="cat-info">
+          <h3>Dinner</h3>
+          <p>Weeknight heroes and weekend showstoppers. Pasta, curries, stir-fries, and more.</p>
+          <a href="#recipes" class="btn-ghost-teal">Explore Dinner →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ RECIPE DETAIL PREVIEW ═══ -->
+  <section class="detail-preview section">
+    <div class="detail-inner fade-up">
+      <div class="detail-card">
+        <div class="detail-img">
+          <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=700&q=80" alt="Spaghetti Bolognese"/>
+        </div>
+        <div class="detail-content">
+          <span class="badge-teal">Dinner · 35 min</span>
+          <h2>Creamy Tomato Pasta</h2>
+          <p class="detail-desc">A weeknight staple that never gets old. Made with San Marzano tomatoes, fresh garlic, and a generous handful of Parmesan.</p>
+          <div class="detail-macros">
+            <div class="macro"><strong>480</strong><span>kcal</span></div>
+            <div class="macro"><strong>18g</strong><span>protein</span></div>
+            <div class="macro"><strong>62g</strong><span>carbs</span></div>
+            <div class="macro"><strong>14g</strong><span>fat</span></div>
+          </div>
+          <div class="detail-ingredients">
+            <h4>Ingredients</h4>
+            <ul>
+              <li>250g spaghetti</li>
+              <li>400g San Marzano tomatoes</li>
+              <li>3 cloves garlic, sliced</li>
+              <li>50ml heavy cream</li>
+              <li>Fresh basil, Parmesan to serve</li>
+            </ul>
+          </div>
+          <a href="#recipes" class="btn-teal">See Full Recipe</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section section" id="cta">
+    <div class="cta-inner fade-up">
+      <p class="eyebrow light">Ready to eat well?</p>
+      <h2>Your next great meal<br/><em>is one click away.</em></h2>
+      <p>No sign-up required. Just open and cook.</p>
+      <a href="#recipes" class="btn-white">Browse All Recipes</a>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo">Clean Plates</span>
+        <p>Simple recipes for everyday cooking. Made with care, eaten with joy.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Recipes</h5>
+        <a href="#recipes">Breakfast</a>
+        <a href="#recipes">Lunch</a>
+        <a href="#recipes">Dinner</a>
+        <a href="#recipes">Quick Meals</a>
+      </div>
+      <div class="footer-col">
+        <h5>Features</h5>
+        <a href="#features">Recipe of the Day</a>
+        <a href="#fridge">Fridge Finder</a>
+        <a href="#features">Nutrition Info</a>
+      </div>
+      <div class="footer-col">
+        <h5>About</h5>
+        <a href="#">Our Story</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Clean Plates. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>
